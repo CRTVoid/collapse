@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="26.003761"
+   height="26"
+   viewBox="0 0 6.8801616 6.8791671"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
+   sodipodi:docname="ng.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="px"
+     showgrid="true"
+     units="px"
+     inkscape:snap-bbox="true"
+     inkscape:bbox-paths="true"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:snap-bbox-midpoints="true"
+     inkscape:snap-center="true"
+     inkscape:snap-object-midpoints="true"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:zoom="9.7375003"
+     inkscape:cx="7.8048778"
+     inkscape:cy="18.844672"
+     inkscape:window-width="1920"
+     inkscape:window-height="1001"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     inkscape:showpageshadow="2"
+     inkscape:deskcolor="#d1d1d1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid946"
+       originx="-6.9981191"
+       originy="-7"
+       spacingy="1"
+       spacingx="1"
+       units="px"
+       visible="true" />
+    <sodipodi:guide
+       position="4.7629973,11.641667"
+       orientation="0,-1"
+       id="guide1655"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="4.7629973,5.2916668"
+       orientation="0,-1"
+       id="guide1657"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Слой 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-1.8515857,-1.8520834)">
+    <g
+       id="g5"
+       transform="matrix(0.26458334,0,0,0.26458334,1.0581695,1.0583333)">
+      <path
+         d="m 4,7 h 8.95 C 12.73,9.52 11.67,11.85 10,13.66 8.95,12.52 8.13,11.16 7.62,9.67 7.44,9.15 6.87,8.87 6.35,9.05 5.83,9.23 5.55,9.8 5.73,10.32 6.33,12.07 7.29,13.66 8.53,15 7.85,15.52 7.1,15.97 6.29,16.33 L 4.6,17.08 C 4.1,17.3 3.87,17.89 4.09,18.4 4.25,18.78 4.62,19 5,19 5.14,19 5.27,18.97 5.41,18.91 L 7.1,18.16 c 1.06,-0.47 2.03,-1.08 2.91,-1.78 0.88,0.71 1.85,1.32 2.9,1.78 l 1.69,0.75 c 0.13,0.06 0.26,0.09 0.4,0.09 0.38,0 0.75,-0.22 0.91,-0.59 0.22,-0.5 0,-1.1 -0.51,-1.32 l -1.69,-0.75 c -0.8,-0.36 -1.55,-0.81 -2.23,-1.33 2,-2.17 3.25,-4.98 3.48,-8 H 16 c 0.55,0 1,-0.45 1,-1 0,-0.55 -0.45,-1 -1,-1 H 11 V 4 C 11,3.45 10.55,3 10,3 9.45,3 9,3.45 9,4 V 5 H 4 C 3.45,5 3,5.45 3,6 3,6.55 3.45,7 4,7 Z"
+         id="path1" />
+      <path
+         d="m 28,29 c 0.12,0 0.24,-0.02 0.36,-0.07 0.52,-0.2 0.77,-0.78 0.57,-1.29 L 24.29,15.57 C 23.93,14.63 23.01,14 22,14 c -1.01,0 -1.93,0.63 -2.29,1.57 l -4.64,12.07 c -0.2,0.52 0.06,1.09 0.57,1.29 0.52,0.2 1.09,-0.06 1.29,-0.57 L 18.61,24 h 6.78 l 1.68,4.36 C 27.22,28.76 27.6,29 28,29 Z m -8.62,-7 2.2,-5.71 c 0.13,-0.35 0.72,-0.35 0.85,0 l 2.2,5.71 z"
+         id="path2" />
+      <path
+         d="M 27.29,9.29 27,9.59 V 8 C 27,6.35 25.65,5 24,5 h -3 c -0.55,0 -1,0.45 -1,1 0,0.55 0.45,1 1,1 h 3 c 0.55,0 1,0.45 1,1 V 9.59 L 24.71,9.3 c -0.39,-0.39 -1.02,-0.39 -1.41,0 -0.39,0.39 -0.39,1.02 0,1.41 l 2,2 C 25.49,12.9 25.74,13 26,13 c 0.26,0 0.51,-0.1 0.71,-0.29 l 2,-2 C 29.1,10.32 29.1,9.69 28.71,9.3 28.32,8.91 27.68,8.9 27.29,9.29 Z"
+         id="path3" />
+      <path
+         d="m 3.29,24.71 c 0.39,0.39 1.02,0.39 1.41,0 L 5,24.41 V 26 c 0,1.65 1.35,3 3,3 h 3 c 0.55,0 1,-0.45 1,-1 0,-0.55 -0.45,-1 -1,-1 H 8 C 7.45,27 7,26.55 7,26 V 24.41 L 7.29,24.7 C 7.49,24.9 7.74,25 8,25 8.26,25 8.51,24.9 8.71,24.71 9.1,24.32 9.1,23.69 8.71,23.3 l -2,-2 C 6.32,20.91 5.69,20.91 5.3,21.3 l -2,2 c -0.4,0.38 -0.4,1.02 -0.01,1.41 z"
+         id="path4" />
+    </g>
+  </g>
+</svg>

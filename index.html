@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, maximum-scale=1.0, user-scalable=no">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Days+One&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Raleway:ital,wght@0,100..900;1,100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="icon" type="image/png" href="favicon.png">
+<!-- SDK от Яндекс -->
+<script src="https://yandex.ru/games/sdk/v2"></script>
+
+<!-- Скрипт YandexSDK (смотри ниже) -->
+<script src="yandex-sdk.js"></script>
+<title>Коллапс</title>
+
+
+<style>
+.swal2-popup-custom {
+  font-family: Days One;
+  font-weight: 400px;
+  font-size: 18px;
+  padding: 1em 1.5em;
+  border: none;
+  box-shadow: none;
+}
+</style>
+<style>
+.ball-wrapper {
+    position: relative;
+    width: 40px;
+    height: 40px;
+}
+.ball {
+    position: relative;
+    z-index: 1;
+}
+.mask-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 40px;
+    height: 40px;
+    z-index: 2;
+    pointer-events: none;
+}
+</style>
+<style>
+  #darkModeToggle {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    z-index: 1000;
+  }
+  #toggleSwitch {
+    height: 0;
+    width: 0;
+    visibility: hidden;
+    background: #001011;
+  }
+  #toggleSwitch + label {
+    cursor: pointer;
+    text-indent: -9999px;
+    width: 50px;
+    height: 25px;
+    background: #001011;
+    display: block;
+    border-radius: 500px;
+    position: relative;
+    transition: ease-in-out 1s;
+  }
+  #toggleSwitch + label:after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 21px;
+    height: 21px;
+    background: #F1F2EE;
+    border-radius: 90px;
+    transition: 0.3s;
+  }
+  #toggleSwitch:checked + label {
+    background: #F1F2EE;
+  }
+  #toggleSwitch:checked + label:after {
+    left: calc(100% - 2px);
+    transform: translateX(-100%);
+    background: #001011;
+  }
+
+  body.dark-mode, html.dark-mode {
+    background: #001011 !important;
+    color: #f0f0f0 !important;
+  }
+
+  body.dark-mode #container {
+    background: #001011 !important;
+  }
+  body.dark-mode #board {
+    background: #001011 !important;
+  }
+    
+  body.dark-mode #score {
+    border: 1px solid #F1F2EE;
+    color: #F1F2EE;
+    background: #1c1c1c;
+    border: none;
+  }
+  
+  body.dark-mode #newGame {
+    background-image: url('icons/ng_wt.svg');
+      
+  }
+    
+  body.dark-mode #help-button {
+    background-image: url('icons/help_wt.svg');
+  }
+        
+  body.dark-mode #highlight {
+    outline: 2px dashed #F1F2EE;
+    background: #F1F2EE;
+  }
+    
+  body.dark-mode #lang-selector {
+  outline: none;
+  font-weight: 700;
+  height: 25px;
+  width: 80px;
+  font-family: PT Sans;
+  color: #F1F2EE;
+  font-size: 16px;
+  border-radius: 50px;
+  background-color: #001011;
+  border: 1px solid #363537;
+  border: none;
+  cursor: pointer;
+}
+  body.dark-mode .lang-icon {
+  width: 25px;
+  height: 25px;
+  margin-right: 10px;
+  background-image: url('icons/lang_2wt.svg')
+}
+</style>
+
+<style>
+
+#newGame {
+/*  position: relative;*/
+/*
+  top: 50px;
+  left: 50px;
+*/
+  margin-right: 10px;
+  margin-bottom: 10px;
+  height: 40px;
+  width: 40px;
+  background: none;
+  border:none;
+  background-image: url('icons/ng.svg');
+  cursor: pointer;
+  z-index: 1000;
+  border: none;
+}
+
+/*
+#newGame:hover {
+   transform: scale (1.1);
+   transition: 1s ease;
+}
+*/
+        
+#help-button {
+/*  position: relative;*/
+/*
+  top: 120px;
+  left: 50px;
+*/
+  height: 40px;
+  width: 40px;
+  background: none;
+  border:none;
+  background-image: url('icons/help.svg');
+  cursor: pointer;
+  z-index: 1000;
+  border: none;
+}
+/*
+#help-button:hover {
+  background: #EEB902;
+}
+*/
+#help-popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #222;
+  color: #eee;
+  border: none;
+  border-radius: 12px;
+  padding: 40px;
+  z-index: 2000;
+}
+.help-content h2 {
+  margin-top: 0;
+  font-family: Days One;
+  font-weight: 400;
+  color: #fff;
+  font-size: 30px;
+}
+.help-content ul {
+  margin: 0;
+  font-family: PT Sans;
+  padding-left: 20px;
+  margin-bottom: 20px;
+}
+.help-content button {
+  margin-top: 12px;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  background: #444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.help-content button:hover {
+  background: #666;
+}
+</style>
+</link><link href="style.css" rel="stylesheet"/>
+</head>
+<body>
+<body oncontextmenu="return false">
+<div id="menu-buttons">
+<button id="newGame" title="Новая игра"></button>
+<button id="help-button" title="Справка"></button>
+</div>
+<div class="lang-select-wrapper">
+
+<div id="lang-container">
+  <div class='lang-icon'></div>
+  <select id="lang-selector" title="Change language">
+    <option value="ru">Русский</option>
+    <option value="en">English</option>
+  </select>
+</div>
+</div>
+<div id="container">
+<div id="score">Счёт: 0</div>
+<div id="board"></div>
+</div>
+
+<script>
+        
+    const colors = ["#F45D01", "#97CC04", "#2D7DD2", "#EEB902", "#68B0AB"]
+    const rows = 11, cols = 12, cellSize = 42;
+    const board = [];
+    let score = 0;
+
+    const boardEl = document.getElementById('board');
+    const scoreEl = document.getElementById('score');
+
+    document.getElementById("newGame").onclick = () => init();
+
+    function init() {
+      boardEl.innerHTML = "";
+      board.length = 0;
+      score = 0;
+      scoreEl.textContent = "Счёт: 0";
+
+      for (let y = 0; y < rows; y++) {
+        board[y] = [];
+        for (let x = 0; x < cols; x++) {
+          const color = colors[Math.floor(Math.random() * colors.length)];
+          const div = document.createElement("div");
+          div.className = "cell";
+          div.style.background = color;
+          div.style.opacity = 2;
+          board[y][x] = { color, div };
+          div.dataset.x = x;
+          div.dataset.y = y;
+          div.onclick = handleClick;
+          div.onmouseenter = handleHover;
+          div.onmouseleave = clearHighlights;
+          boardEl.appendChild(div);
+        }
+      }
+
+      positionAll();
+    }
+
+    function positionAll() {
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          const cell = board[y][x];
+          if (cell && cell.div) {
+            cell.div.style.left = `${x * cellSize}px`;
+            cell.div.style.top = `${y * cellSize}px`;
+          }
+        }
+      }
+    }
+
+    function handleHover(e) {
+      const x = +e.target.dataset.x;
+      const y = +e.target.dataset.y;
+      const group = getGroup(x, y);
+      clearHighlights();
+      if (group.length >= 2) {
+        group.forEach(p => board[p.y][p.x].div.classList.add("highlight"));
+      }
+    }
+
+    function clearHighlights() {
+      document.querySelectorAll(".highlight").forEach(d => d.classList.remove("highlight"));
+    }
+
+    function handleClick(e) {
+  const x = +e.target.dataset.x;
+  const y = +e.target.dataset.y;
+  const group = getGroup(x, y);
+  if (group.length < 2) return;
+
+  group.forEach(p => {
+    boardEl.removeChild(board[p.y][p.x].div);
+    board[p.y][p.x] = null;
+  });
+
+  score += group.length * (group.length - 1);
+  scoreEl.textContent = "Счёт: " + score;
+
+  collapse(() => {
+    if (!hasMoves()) {
+      setTimeout(() => {
+        Swal.fire({
+          title: 'Игра окончена!',
+          text: `Итог: ${score}`,
+          icon: 'error',
+          confirmButtonText: 'Новая игра',
+          confirmButtonColor: '#2D7DD2',
+          background: '#FFFDF6',
+          color: '#2D7DD2',
+          customClass: {
+            popup: 'swal2-popup-custom'
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            init();
+          }
+        });
+      }, 200);
+    }
+  });
+}
+
+
+    function getGroup(x, y) {
+      const color = board[y][x]?.color;
+      if (!color) return [];
+      const visited = Array.from({length: rows}, () => Array(cols).fill(false));
+      const group = [];
+      const stack = [{x, y}];
+
+      while (stack.length) {
+        const {x, y} = stack.pop();
+        if (x < 0 || x >= cols || y < 0 || y >= rows) continue;
+        if (visited[y][x] || board[y][x]?.color !== color) continue;
+        visited[y][x] = true;
+        group.push({x, y});
+        stack.push({x: x+1, y}, {x: x-1, y}, {x, y: y+1}, {x, y: y-1});
+      }
+
+      return group;
+    }
+
+    function collapse(callback) {
+      for (let x = 0; x < cols; x++) {
+        let pointer = rows - 1;
+        for (let y = rows - 1; y >= 0; y--) {
+          if (board[y][x]) {
+            if (y !== pointer) {
+              board[pointer][x] = board[y][x];
+              board[pointer][x].div.dataset.y = pointer;
+              board[y][x] = null;
+            }
+            pointer--;
+          }
+        }
+      }
+
+      let writeCol = 0;
+      for (let readCol = 0; readCol < cols; readCol++) {
+        if (board.some(row => row[readCol])) {
+          if (writeCol !== readCol) {
+            for (let y = 0; y < rows; y++) {
+              board[y][writeCol] = board[y][readCol];
+              if (board[y][writeCol]) {
+                board[y][writeCol].div.dataset.x = writeCol;
+              }
+              board[y][readCol] = null;
+            }
+          }
+          writeCol++;
+        }
+      }
+
+      for (let x = writeCol; x < cols; x++) {
+        for (let y = 0; y < rows; y++) {
+          board[y][x] = null;
+        }
+      }
+
+      positionAll();
+      if (callback) setTimeout(callback, 300);
+    }
+
+    function hasMoves() {
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          const c = board[y][x]?.color;
+          if (!c) continue;
+          for (const [dx, dy] of [[1,0],[0,1]]) {
+            const nx = x + dx, ny = y + dy;
+            if (nx < cols && ny < rows && board[ny][nx]?.color === c) return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    init();
+  </script>
+<div id="darkModeToggle">
+<input id="toggleSwitch" type="checkbox"/>
+<label for="toggleSwitch"></label>
+</div>
+<script>
+function closeHelp() {
+  document.getElementById("help-popup").style.display = "none";
+}
+</script>
+<!-- Help Popup -->
+<div id="help-popup">
+<div class="help-content">
+<h2>Как играть</h2>
+<p>Нажмите на группу шариков одного цвета, чтобы удалить их с поля.</p>
+<p>Чем больше группа, тем больше очков:</p>
+<ul>
+<li>2 шарика — 2 очка</li>
+<li>3 — 6 очков</li>
+<li>4 — 12 очков</li>
+<li>5 — 20 очков</li>
+<li>6+ — по формуле: N × (N - 1)</li>
+</ul>
+<button onclick="closeHelp()">Понятно</button>
+</div>
+</div>
+<script>
+document.getElementById("help-button").onclick = function () {
+  document.getElementById("help-popup").style.display = "block";
+};
+function closeHelp() {
+  document.getElementById("help-popup").style.display = "none";
+}
+</script>
+<script>
+  const translations = {
+    ru: {
+      title: "Collapse",
+      newGame: "Новая игра",
+      score: "Счёт",
+      langLabel: "Язык"
+    },
+    en: {
+      title: "Collapse",
+      newGame: "New Game",
+      score: "Score",
+      langLabel: "Language"
+    }
+  };
+</script>
+<script src="script.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log('Service Worker registered', reg))
+        .catch(err => console.error('Service Worker registration failed:', err));
+    });
+  }
+</script>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      return false;
+    });
+  });
+</script>
+<script>
+  async function startNewGame() {
+    console.log('[Game] Запуск новой игры...');
+    // Тут запускай свою игру (например, сброс поля, счёт, и т.д.)
+  }
+
+  window.addEventListener('load', async () => {
+    const sdkReady = await YandexSDK.init();
+
+    if (sdkReady) {
+      await YandexSDK.initPlayer();
+      const lang = YandexSDK.getLanguage();
+      console.log('[Game] Язык интерфейса:', lang);
+    }
+
+    // Кнопка "Новая игра"
+    document.getElementById('newGame').addEventListener('click', () => {
+      YandexSDK.showAd();
+    });
+  });
+</script>
+<script>
+const selector = document.getElementById('lang-selector');
+
+selector.addEventListener('change', (e) => {
+  const selectedLang = e.target.value;
+  changeLanguage(selectedLang);
+  localStorage.setItem('lang', selectedLang); // сохраняем выбор
+});
+</script>
+</body>
+</html>
