@@ -16,17 +16,20 @@ let userLang = "en"; // по умолчанию
 async function initYandexSDK() {
   if (typeof YaGames !== "undefined") {
     try {
-      ysdk = await YaGames.init();
+      ysdk = await YaGames.init();  // Инициализация SDK
       console.log("✅ Yandex SDK инициализирован");
 
-      // Получаем язык пользователя через i18n
-      userLang = ysdk.i18n && ysdk.i18n.lang ? ysdk.i18n.lang : "en";
-      console.log("🌍 Язык пользователя (через i18n):", userLang);
-
-      // Сообщаем платформе, что игра готова
-      ysdk.features?.LoadingAPI?.ready();
-    } catch (e) {
-      console.error("❌ Ошибка инициализации SDK:", e);
+      // Подождём, пока инициализация SDK завершится, а затем вызываем ready() для i18n
+      if (ysdk.i18n) {
+        console.log("✅ i18n доступно");
+        // Ждём инициализацию i18n перед вызовом ready()
+        await ysdk.i18n.ready();
+        console.log("✅ i18n.ready() вызвано успешно");
+      } else {
+        console.warn("⚠️ i18n не найдено в SDK");
+      }
+    } catch (error) {
+      console.error("❌ Ошибка инициализации Yandex SDK:", error);
     }
   } else {
     console.warn("⚠️ YaGames SDK не найден");
