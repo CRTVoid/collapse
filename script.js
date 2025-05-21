@@ -12,7 +12,6 @@ if (toggle) {
   // Запускаем инициализацию SDK
   initYandexSDK();
 
-  // Кнопка "Новая игра"
   const newGameButton = document.getElementById("newGame");
   if (newGameButton) {
     newGameButton.addEventListener("click", () => {
