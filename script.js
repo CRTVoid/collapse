@@ -23,11 +23,15 @@ let ysdk = null;
 let sdkReady = false;
 
 // Инициализация Yandex SDK
-async function initYandexSDK() {
+aasync function initYandexSDK() {
   if (window.YaGames) {
     try {
       ysdk = await YaGames.init();
       sdkReady = true;
+
+      const lang = ysdk.environment.i18n.lang || 'en';
+      console.log('🌐 Язык пользователя:', lang);
+
       console.log('✅ Yandex SDK инициализирован');
       ysdk.features?.LoadingAPI?.ready(); // сигнал платформе, что игра готова
     } catch (e) {
@@ -37,7 +41,6 @@ async function initYandexSDK() {
     console.warn('❗ YaGames SDK не найден');
   }
 }
-
 // Показываем рекламу и запускаем игру после неё
 async function showAdThenStartGame() {
   if (ysdk && ysdk.adv) {
