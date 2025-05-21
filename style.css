@@ -1,0 +1,304 @@
+* {
+  user-select: none;       /* Отключает выделение текста */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+
+    html, body {
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #F1F2EE;
+      font-family: Nunito;
+      font-weight: 400;
+      touch-action: none;
+}
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #container {
+      position: absolute;
+      text-align: center;
+      background: #F1F2EE;
+      border-radius: 20px;
+      margin-left: 30px;
+      margin-right: 30px;
+/*      padding: 10px 30px;*/
+    }
+    h1 {
+      margin: 5px 0;
+      font-size: 20px;
+      color: #3399ff;
+    }
+
+    #score-wrapper {
+      align-items: center;
+      font-size: 24px;
+      font-family: Days One;
+      font-weight: 400;
+      color: #1c1c1c;
+      margin-bottom: 20px;
+      padding-top: 15px;
+      padding-bottom: 15px;
+      border: 0.1px solid #1c1c1c;
+      border-color: #363537;
+      border-radius: 50px;
+      z-index: 10000;
+    
+}
+    #board {
+      width: 504px;
+      height: 462px;
+      position: relative;
+      background: #F1F2EE;
+      border: 1px solid #000000;
+      border: none;
+      border-radius: 20px;
+    }
+
+    .cell {
+      width: 37px;
+      height: 37px;
+      border-radius: 50%;
+      position: absolute;
+      transition: top 0.2s ease-in, left 0.2s ease-in;
+      background-blend-mode: overlay;
+      background-color: currentColor;
+    }
+    .highlight {
+      background: #1c1c1c;
+    }
+
+.cell.highlight {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  animation: pulse 5s infinite cubic-bezier(0.19, 1, 0.22,1);
+  transition: all 2s ease;
+  animation-fill-mode: forwards;
+  animation-iteration-count: 1;
+
+}
+
+@keyframes pulse {
+    10% { transform: scale(0.8); opacity: 1; }
+    30% { transform: scale(0.8); opacity: 1; }
+    50% { transform: scale(0.8); opacity: 1; }
+    100% { transform: scale(0.8); opacity: 1; }
+}
+
+#menu-buttons {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+}
+
+
+#lang-container {
+  position: absolute;
+  align-items: center;
+  display: flex;
+  top: 46px;
+  right: 40px;
+}
+
+.lang-icon {
+  height: 25px;
+  width: 25px;
+  background-repeat: no-repeat;
+  background-size: cover;     
+  background-position: center;
+  margin-right: 10px;
+  background-image: url(icons/lang_2.svg);
+}
+
+#lang-selector {
+  outline: none;
+  font-weight: 700;
+  height: 25px;
+  width: 95px;
+  font-family: Nunito;
+  font-size: 16px;
+  border-radius: 50px;
+  color: #001011;
+  background-color: #F1F2EE;
+  border: 1px solid #363537;
+  border: none;
+  cursor: pointer;
+}
+
+#gameover-popup {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: none;
+  width: auto;
+  position: fixed;
+  align-items: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #222;
+  color: #eee;
+  border: none;
+  border-radius: 5px;
+  padding: 40px;
+  z-index: 2000;
+}
+
+#gameover-popup .gameover-content h2 {
+  margin-top: 0;
+  font-family: Days One;
+  font-weight: 400;
+  color: #fff;
+  font-size: 30px;
+}
+
+#gameover-popup .gameover-content p {
+  font-family: PT Sans;
+}
+
+#gameover-popup .gameover-content button {
+  display: block;
+  height: 100%;
+  width: 100%;
+  margin: 20px auto 0;
+  font-family: Nunito;
+  padding: 10px;
+  padding-right: 20px;
+  padding-left: 20px;
+  font-size: 16px;
+  font-weight: 700;
+  background: #2D7DD2;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+#gameover-popup .gameover-content button:hover {
+  background: #448cd7ff;
+}
+
+@media (max-width: 600px) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+    
+    #container {
+    transform: scale(0.75);
+    transform-origin: center center;
+    position: initial;
+    }
+
+    #help-popup {
+    overflow-wrap: break-word;
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #222;
+    color: #eee;
+    border: none;
+    border-radius: 10px;
+    padding: 40px;
+    z-index: 2000;
+    height: 360px;
+    width: 300px;
+        
+}
+    
+    #gameover-popup{
+    width: var(--popup-width);
+    align-items: center;
+    display: none;
+    position: fixed;
+    padding-right: 20px;
+    padding-left: 20px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #222;
+    color: #eee;
+    border: none;
+    border-radius: 20px;
+    padding: 40px;
+    z-index: 2000;
+    }
+    
+    #gameover-popup .help-content h2 {
+    --popup-width: 220px;
+    white-space: nowrap;
+  width: var(--popup-width);
+  margin-top: 0;
+    vertical-align: center;
+  font-family: Days One;
+  font-weight: 400;
+  color: #fff;
+  font-size: 25px;
+}
+    
+    #lang-selector {
+  outline: none;
+  font-weight: 700;
+  height: 25px;
+  width: 105px;
+  font-family: Nunito;
+  font-size: 16px;
+  border-radius: 50px;
+  color: #001011;
+  background-color: #F1F2EE;
+  border: 1px solid #363537;
+  border: none;
+  cursor: pointer;
+}
+}
+
+
+@media (max-width: 400px) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+    
+    #container {
+    transform: scale(0.55);
+    transform-origin: center center;
+    position: initial;
+    }
+}
+
+@media screen and (max-height: 500px) {
+   * {
+    animation: none !important;
+    transition: none !important;
+  }  
+  
+  #container {
+    transform: scale(0.7);
+    transform-origin: center center;
+    position: initial;
+    }
+}
+
+#overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.9); /* затемнение */
+  z-index: 1999;
+  pointer-events: all; /* перехватывает клики */
+}
+
+#gameOverScoreWrapper {
+  background: #333333ff;
+  border-radius: 10px;
+  margin-bottom: 30px;
+}
