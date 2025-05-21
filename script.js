@@ -1,10 +1,13 @@
 document.addEventListener("DOMContentLoaded", function() {
   // Темная тема переключатель
   const toggle = document.getElementById("toggleSwitch");
-  toggle.addEventListener("change", function() {
+if (toggle) {
+  toggle.addEventListener("change", function () {
     document.body.classList.toggle("dark-mode");
     document.documentElement.classList.toggle("dark-mode");
   });
+}
+
 
   // Запускаем инициализацию SDK
   initYandexSDK();
@@ -16,24 +19,63 @@ document.addEventListener("DOMContentLoaded", function() {
       showAdThenStartGame();
     });
   }
+
+  // Тестовая кнопка завершения игры
+  const forceEnd = document.getElementById("force-end");
+  if (forceEnd) {
+    forceEnd.addEventListener("click", () => {
+      showGameOver(score);
+    });
+  }
 });
 
-// Глобальные переменные для SDK
 let ysdk = null;
 let sdkReady = false;
+let userLang = 'en';
+
+// Таблица локализации
+const i18n = {
+  en: {
+    title: "Collapse",
+    newGame: "New Game",
+    gameOver: "Game Over",
+    finalScore: "Your score:",
+  },
+  ru: {
+    title: "Коллапс",
+    newGame: "Новая игра",
+    gameOver: "Игра окончена",
+    finalScore: "Ваш счёт:",
+  }
+};
+
+// Устанавливает текст на основе языка
+function applyLocalization(lang) {
+  const dict = i18n[lang] || i18n.en;
+  const el = (id) => document.getElementById(id);
+
+  if (el("title")) el("title").textContent = dict.title;
+  if (el("newGame")) el("newGame").textContent = dict.newGame;
+  if (el("gameover-title")) el("gameover-title").textContent = dict.gameOver;
+  if (el("final-score-label")) el("final-score-label").textContent = dict.finalScore;
+}
 
 // Инициализация Yandex SDK
-aasync function initYandexSDK() {
+async function initYandexSDK() {
   if (window.YaGames) {
     try {
       ysdk = await YaGames.init();
       sdkReady = true;
 
-      const lang = ysdk.environment.i18n.lang || 'en';
-      console.log('🌐 Язык пользователя:', lang);
+      // Определение языка
+      userLang = ysdk.environment.i18n.lang || 'en';
+      console.log(`✅ Yandex SDK инициализирован. Язык: ${userLang}`);
 
-      console.log('✅ Yandex SDK инициализирован');
-      ysdk.features?.LoadingAPI?.ready(); // сигнал платформе, что игра готова
+      // Применение локализации
+      applyLocalization(userLang);
+
+      // Готовность игры
+      ysdk.features?.LoadingAPI?.ready();
     } catch (e) {
       console.error('❌ Ошибка инициализации Yandex SDK:', e);
     }
@@ -41,6 +83,7 @@ aasync function initYandexSDK() {
     console.warn('❗ YaGames SDK не найден');
   }
 }
+
 // Показываем рекламу и запускаем игру после неё
 async function showAdThenStartGame() {
   if (ysdk && ysdk.adv) {
@@ -83,8 +126,3 @@ function restartGame() {
   document.getElementById("gameover-popup").style.display = "none";
   init(); // старт новой игры
 }
-
-// Тестовая кнопка завершения игры
-document.getElementById("force-end").addEventListener("click", () => {
-  showGameOver(score);
-});
