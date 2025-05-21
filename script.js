@@ -12,6 +12,17 @@ document.addEventListener("DOMContentLoaded", function () {
   initYandexSDK();
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+  const newGameButton = document.getElementById("newGame");
+
+  if (newGameButton) {
+    newGameButton.addEventListener("click", () => {
+      showAdThenStartGame();
+    });
+  }
+});
+
+
  ///Завершение игры — отображение результата
 function showGameOver(score) {
   document.getElementById("final-score").textContent = score;
