@@ -1,16 +1,18 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
   // Темная тема переключатель
   const toggle = document.getElementById("toggleSwitch");
-if (toggle) {
-  toggle.addEventListener("change", function () {
-    document.body.classList.toggle("dark-mode");
-    document.documentElement.classList.toggle("dark-mode");
-  });
-}
+  if (toggle) {
+    toggle.addEventListener("change", function () {
+      document.body.classList.toggle("dark-mode");
+      document.documentElement.classList.toggle("dark-mode");
+    });
+  }
 
+  // 👇 Добавляем инициализацию SDK
+  initYandexSDK();
 });
 
-// Завершение игры — отображение результата
+ ///Завершение игры — отображение результата
 function showGameOver(score) {
   document.getElementById("final-score").textContent = score;
   document.getElementById("overlay").style.display = "block";
