@@ -8,22 +8,29 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // 👇 Добавляем инициализацию SDK
-  initYandexSDK();
-});
-
-document.addEventListener("DOMContentLoaded", function () {
   const newGameButton = document.getElementById("newGame");
-
   if (newGameButton) {
     newGameButton.addEventListener("click", () => {
-      showAdThenStartGame();
+      YandexSDK.showAd();
+    });
+  }
+
+  const forceEndButton = document.getElementById("force-end");
+  if (forceEndButton) {
+    forceEndButton.addEventListener("click", () => {
+      showGameOver(score);
     });
   }
 });
 
+window.addEventListener("load", () => {
+  YandexSDK.init().then(() => {
+    console.log("[Main] SDK инициализирован. Показываем рекламу при старте...");
+    YandexSDK.showAd();
+  });
+});
 
- ///Завершение игры — отображение результата
+/// Завершение игры — отображение результата
 function showGameOver(score) {
   document.getElementById("final-score").textContent = score;
   document.getElementById("overlay").style.display = "block";
@@ -40,7 +47,8 @@ function restartGame() {
   init(); // старт новой игры
 }
 
-// Тестовая кнопка завершения игры
-document.getElementById("force-end").addEventListener("click", () => {
-  showGameOver(score);
-});
+// 🚀 Глобальная функция запуска новой игры, вызывается из YandexSDK
+function startNewGame() {
+  console.log("[Main] Запуск новой игры...");
+  init();
+}
