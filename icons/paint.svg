@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="50"
+   height="50"
+   viewBox="0 0 13.229166 13.229167"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   sodipodi:docname="ng.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="px"
+     showgrid="true"
+     units="px"
+     inkscape:snap-bbox="true"
+     inkscape:bbox-paths="true"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:snap-bbox-midpoints="true"
+     inkscape:snap-center="true"
+     inkscape:snap-object-midpoints="true"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:zoom="6.8854526"
+     inkscape:cx="25.778988"
+     inkscape:cy="27.158709"
+     inkscape:window-width="1600"
+     inkscape:window-height="878"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     inkscape:showpageshadow="2"
+     inkscape:deskcolor="#d1d1d1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid946"
+       originx="0.012193515"
+       originy="0.012193515"
+       spacingy="1"
+       spacingx="1"
+       units="px"
+       visible="true" />
+    <sodipodi:guide
+       position="6.6145837,10.086593"
+       orientation="0,-1"
+       id="guide1655"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="6.6145818,3.1419323"
+       orientation="0,-1"
+       id="guide1657"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Слой 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0.0032262,0.0032262)">
+    <path
+       style="opacity:1;fill:#363537;fill-opacity:1;stroke-width:0.66146;stroke-linecap:square;stroke-linejoin:round;paint-order:markers fill stroke"
+       d="m 1.6504198,-0.0032262 c -0.91611815,0 -1.653646,0.73752785 -1.653646,1.653646 v 9.9218752 c 0,0.916118 0.73752785,1.653645 1.653646,1.653645 h 9.9218752 c 0.916118,0 1.653645,-0.737527 1.653645,-1.653645 V 1.6504198 c 0,-0.91611815 -0.737527,-1.653646 -1.653645,-1.653646 z"
+       id="rect1" />
+    <path
+       d="m 8.8792449,6.4416346 v 0.6712737 c 0,0.1128723 -0.04481,0.2209238 -0.124495,0.3006104 -0.07969,0.079694 -0.188022,0.1244954 -0.300611,0.1244954 h -0.842822 c -0.116844,0 -0.228576,0.048211 -0.309118,0.1330049 -0.08026,0.085081 -0.122232,0.1993688 -0.115422,0.3159291 l 0.06267,1.1097026 c 0.01389,0.177813 -0.04708,0.353362 -0.168172,0.484384 -0.121098,0.1310231 -0.291535,0.2053221 -0.469923,0.2053221 -0.178387,0 -0.348541,-0.07458 -0.469923,-0.2053221 -0.121092,-0.131022 -0.182063,-0.306571 -0.168167,-0.484384 l 0.06267,-1.1097026 C 6.0424319,7.8701046 6.0007719,7.7558165 5.9205159,7.671019 5.8402559,7.585938 5.7285229,7.5380141 5.6113969,7.5380141 h -0.842822 c -0.112872,0 -0.220924,-0.04481 -0.30061,-0.1244954 -0.07969,-0.079694 -0.124496,-0.1880213 -0.124496,-0.3006104 V 6.4416346 h 4.536093 z M 4.3431519,6.1580419 V 3.8617537 c 0,-0.2348199 0.190294,-0.4253967 0.425397,-0.4253967 h 2.274146 c 0.01305,0 0.02439,0.00879 0.02751,0.021553 l 0.193982,0.7756663 c 0.0031,0.012761 0.01446,0.021553 0.02751,0.021553 0.01305,0 0.02439,-0.00879 0.02751,-0.021553 L 7.5131889,3.45791 c 0.0031,-0.012761 0.01446,-0.021553 0.02751,-0.021553 h 0.913463 c 0.112872,0 0.220924,0.04481 0.300611,0.1244958 0.07969,0.079693 0.124495,0.1880213 0.124495,0.3006105 v 2.2962881 h -4.536086 z"
+       fill-rule="evenodd"
+       id="path1-4"
+       style="fill:#f1f2ee;fill-opacity:1;stroke-width:0.0726008" />
+  </g>
+</svg>
