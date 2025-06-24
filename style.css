@@ -57,6 +57,7 @@
 }
 
     #score-wrapper {
+      position: absolute;
       font-size: 30px;
       font-family: Orbitron;
       font-weight: 700;
