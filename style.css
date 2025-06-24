@@ -57,13 +57,12 @@
 }
 
     #score-wrapper {
-      position: absolute;
       font-size: 30px;
       font-family: Orbitron;
       font-weight: 700;
       color: #F2F3EE;
       margin-bottom: 15px;
-      border: 2px solid #555;
+      border: 2px solid #4a4a4a;
       padding-top: 15px;
       padding-bottom: 15px;
 /*       background: #363537; */
@@ -75,7 +74,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      box-shadow: inset 2px 2px 8px 0px #1a1a1aff;
+      box-shadow: inset 4px 4px 10px 0px #1a1a1aff;
     
 }
 
