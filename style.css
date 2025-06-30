@@ -260,18 +260,69 @@
   background: #448cd7ff;
 }
 
-#help-popup #gameover-popup {
+#help-popup {
+  transform-origin: center center;
+  display: none;
   position: absolute;
+  font-size: clamp(1vh, 2vw, 14px);
+  min-width: 40wh;
+  max-width: 50vh;
+  min-height: 70wh;
+  max-height: 80vh;
+/*  width: fit-content;*/
+  border: 1px solid #555;
+  display: none;
+  padding: 2vh 4vw;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  padding: 2vh 4vw;
-  border-radius: 1em;
-  box-shadow: 4px 4px 10px 0px #1a1a1aff;
+  background: #222;
+  color: #eee;
+  border-radius: 10px;
+  padding: 40px;
+  z-index: 2000;
+}
+.help-content h2 {
+  margin-top: 0;
+  font-family: Days One;
+  font-size: clamp(1px, 4vw, 24px);
+  font-weight: 400;
+  color: #fff;
+}
+.help-content ul {
+  margin: 0;
+  font-family: Nunito;
+  font-size: clamp(1px, 2vw, 14px);
+  padding-left: 20px;
+  margin-bottom: 20px;
+}
+.help-content button {
+  margin-top: 12px;
+  padding: 10px;
+  font-size: clamp(1px, 1.5vw, 12px);
+  font-weight: 600;
+  background: #444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.help-content button:hover {
+  background: #666;
+}
 
-  /* Автоматическое масштабирование */
-  font-size: clamp(14px, 2.5vw, 24px);
-  max-width: 10vw;
+.feature-row {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+  font-size: clamp(1px, 2vw, 14px);
+}
+
+.feature-icon {
+  width: clamp(25px, 4vw, 45px);
+  height: clamp(25px, 4vw, 45px);
+  margin-right: 10px;
 }
 
 #overlay {
@@ -433,18 +484,6 @@ button.disabled {
   }
 }
 
-.feature-row {
-  display: flex;
-  align-items: center;
-  margin: 10px 0;
-}
-
-.feature-icon {
-  width: 45px;
-  height: 45px;
-  margin-right: 10px;
-}
-
 @media (min-width: 1024px) {
     body {
         background-image: url('img/bg_pattern.png');
@@ -462,9 +501,33 @@ button.disabled {
     #container{
         transform: scale(0.928);
     }
-    
-    .cell {
-        
-    }
 
+}
+
+@media (max-height: 600px) {
+    #help-popup {
+        position: static;
+        box-sizing: border-box;
+        top: 50%;
+        left: 50%;
+        width: 300px;
+        height: 600px;
+        z-index: 9999;
+        transform: scale(0.8);
+    }
+    
+    .help-content{
+        transform: scale(0.9);
+        transform-origin: center center;
+    }
+}
+
+@media (max-height: 400px) {
+    #help-popup {
+        position: static;
+        top: 50%;
+        left: 50%;
+        z-index: 9999;
+        transform: scale(0.5);
+    }
 }
