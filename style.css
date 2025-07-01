@@ -264,11 +264,12 @@
   transform-origin: center center;
   display: none;
   position: absolute;
-  font-size: clamp(1vh, 2vw, 14px);
-  min-width: 40wh;
-  max-width: 50vh;
-  min-height: 70wh;
-  max-height: 80vh;
+  font-size: clamp(1vh, 3vw, 14px);
+  min-width: 50wv;
+  max-width: 60wv;
+  min-height: 70wv;
+  max-height: 80wv;
+  transform: scale (1.5);
 /*  width: fit-content;*/
   border: 1px solid #555;
   display: none;
@@ -285,21 +286,21 @@
 .help-content h2 {
   margin-top: 0;
   font-family: Days One;
-  font-size: clamp(1px, 4vw, 24px);
+  font-size: clamp(1px, 8vw, 24px);
   font-weight: 400;
   color: #fff;
 }
 .help-content ul {
   margin: 0;
   font-family: Nunito;
-  font-size: clamp(1px, 2vw, 14px);
+  font-size: clamp(1px, 3vw, 14px);
   padding-left: 20px;
   margin-bottom: 20px;
 }
 .help-content button {
   margin-top: 12px;
   padding: 10px;
-  font-size: clamp(1px, 1.5vw, 12px);
+  font-size: clamp(1px, 3vw, 12px);
   font-weight: 600;
   background: #444;
   color: white;
@@ -316,13 +317,13 @@
   display: flex;
   align-items: center;
   margin: 10px 0;
-  font-size: clamp(1px, 2vw, 14px);
+  font-size: clamp(1px, 3vw, 14px);
 }
 
 .feature-icon {
-  width: clamp(25px, 4vw, 45px);
-  height: clamp(25px, 4vw, 45px);
-  margin-right: 10px;
+  width: clamp(25px, 7vw, 45px);
+  height: clamp(25px, 7vw, 45px);
+  margin-right: 20px;
 }
 
 #overlay {
@@ -504,21 +505,40 @@ button.disabled {
 
 }
 
-@media (max-height: 600px) {
+@media (max-width: 700px) {
     #help-popup {
         position: static;
         box-sizing: border-box;
         top: 50%;
         left: 50%;
-        width: 300px;
-        height: 600px;
-        z-index: 9999;
-        transform: scale(0.8);
+        width: 350px;
+        height: 475px;
+        transform: scale(1);
     }
     
     .help-content{
-        transform: scale(0.9);
+        transform: scale(1);
         transform-origin: center center;
+    }
+}
+
+@media (max-height: 600px) {
+    #help-popup {
+        position: static;
+        top: 50%;
+        left: 50%;
+        z-index: 9999;
+        transform: scale(0.8);
+    }
+}
+
+@media (max-height: 500px) {
+    #help-popup {
+        position: static;
+        top: 50%;
+        left: 50%;
+        z-index: 9999;
+        transform: scale(0.6);
     }
 }
 
@@ -529,5 +549,35 @@ button.disabled {
         left: 50%;
         z-index: 9999;
         transform: scale(0.5);
+    }
+}
+
+@media (max-height: 300px) {
+    #help-popup {
+        position: static;
+        top: 50%;
+        left: 50%;
+        z-index: 9999;
+        transform: scale(0.4);
+    }
+}
+
+@media (max-height: 220px) {
+    #help-popup {
+        position: static;
+        top: 50%;
+        left: 50%;
+        z-index: 9999;
+        transform: scale(0.3);
+    }
+}
+
+@media (max-height: 120px) {
+    #help-popup {
+        position: static;
+        top: 50%;
+        left: 50%;
+        z-index: 9999;
+        transform: scale(0.15);
     }
 }
