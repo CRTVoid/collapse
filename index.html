@@ -1,1107 +1,1039 @@
 <!DOCTYPE html>
+
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#1a1a1aff">
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="icon-192.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <link rel="apple-touch-icon" href="icon-192.png">
-    <title>Cineroll</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css"> -->
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-        body {
-            padding: 15px;
-            max-width: 420px;
-            margin: 0 auto;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Nunito, sans-serif;
-            background: #000000ff;
-            min-height: 100vh;
-        }
-        .container {
-            background: #1a1a1aff;
-            border-radius: 15px;
-            padding: 25px;
-            margin-top: 110px;
-            margin-bottom: 80px;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        .logo {
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-        .add-btn{
-            width: 48px;
-            background: none;
-        }
-        .tagline {
-            color: #1a1a1aff;
-            font-size: 1.1em;
-        }
-        .tab-btn {
-    position: relative; /* Важно для позиционирования счетчика */
-}
+<meta charset="UTF-8">
+<!-- <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes"> -->
+<script src="https://yandex.ru/games/sdk/v2"></script>
+<script src="yandex-sdk.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Days+One&display=swap" as="style" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Days+One&display=swap">
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" as="style" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap">
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" as="style" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<script src="i18n.js" defer></script>
+<link rel="icon" type="image/png" href="favicon.png">
 
-.tab-counter {
+<title data-i18n="pageTitle">Коллапс</title>
+
+<style>
+.ball-wrapper {
+    position: relative;
+    width: 40px;
+    height: 40px;
+}
+.ball {
+    position: relative;
+    z-index: 1;
+}
+.mask-overlay {
     position: absolute;
-    top: -6px;
-    right: -3px;
-    background: #FF5500;
-    color: white;
-    font-family: Nunito;
-    font-weight: 900;
-    font-size: 0.8em;
-    padding: 3px 8px;
-    border-radius: 50px;
-    min-width: 18px;
-    text-align: center;
-    z-index: 10;
-    transition: all 0.3s ease;
+    top: 0;
+    left: 0;
+    width: 40px;
+    height: 40px;
+    z-index: 2;
+    pointer-events: none;
 }
+</style>
+<style>
+  #darkModeToggle {
+    z-index: 1000;
+  }
+  #toggleSwitch {
+    height: 0;
+    width: 0;
+    visibility: hidden;
+    background: #001011;
+  }
+  #toggleSwitch + label {
+    cursor: pointer;
+    text-indent: -9999px;
+    width: 50px;
+    height: 25px;
+    background: #001011;
+    display: block;
+    border-radius: 500px;
+    position: relative;
+    transition: ease-in-out 1s;
+  }
+  #toggleSwitch + label:after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 21px;
+    height: 21px;
+    background: #F1F2EE;
+    border-radius: 90px;
+    transition: 0.3s;
+  }
+  #toggleSwitch:checked + label {
+    background: #F1F2EE;
+  }
+  #toggleSwitch:checked + label:after {
+    left: calc(100% - 2px);
+    transform: translateX(-100%);
+    background: #001011;
+  }
 
-/* Стандартный стиль для счетчика (не ноль) */
-.tab-counter {
-    background: #75a744ff;
-    color: white;
-}
+  body.dark-mode, html.dark-mode {
+    background: #001011 !important;
+    color: #f0f0f0 !important;
+  }
 
-/* Стиль для активной вкладки (не ноль) */
-.tab-btn.active .tab-counter {
-    background: #75a744ff;
-    opacity: 1;
+  body.dark-mode #container {
+    background: #001011 !important;
+  }
+  body.dark-mode #board {
+    background: #001011 !important;
+  }
+    
+  body.dark-mode #score {
+    border: 1px solid #F1F2EE;
+    color: #F1F2EE;
+    background: #1c1c1c;
+    border: none;
+  }
+  
+  body.dark-mode #newGame {
+    background-image: url('icons/ng_wt.svg');
+      
+  }
+    
+  body.dark-mode #help-button {
+    background-image: url('icons/help_wt.svg');
+  }
+    
+  body.dark-mode #lang-selector {
+  outline: none;
+  font-weight: 700;
+  height: 25px;
+  width: 105px;
+  font-family: Nunito;
+  color: #F1F2EE;
+  font-size: 16px;
+  border-radius: 50px;
+  background-color: #001011;
+  border: 1px solid #363537;
+  border: none;
+  cursor: pointer;
 }
+  body.dark-mode .lang-icon {
+  width: 25px;
+  height: 25px;
+  margin-right: 10px;
+  background-image: url('icons/lang_2wt.svg')
+}
+  body.dark-mode #score-wrapper {
+  align-items: center;
+  color: #F1F2EE;
+  background: #1c1c1c;
+  border: none;
+} 
+  
+</style>
 
-/* Стиль для счетчика, который равен 0 */
-.tab-counter.zero {
-    background: #666666 !important; /* Серый цвет */
-    opacity: 0.4; /* Полупрозрачность */
-}
+<style>
 
-/* Стиль для активной вкладки с нулевым счетчиком */
-.tab-btn.active .tab-counter.zero {
-    background: #666666 !important;
-    opacity: 0.4;
+#newGame {
+  margin-right: 10px;
+  height: 50px;
+  width: 50px;
+  background: none;
+  border:none;
+  background-image: url('icons/ng.svg');
+  cursor: pointer;
+  z-index: 1000;
 }
-        .btn-big {
-            background: #75a744ff;
-            color: #1a1a1aff;
-            border: none;
-            padding: 15px;
-            font-size: 1em;
-            font-weight: 900;
-            font-family: Nunito;
-            border-radius: 50px;
-            width: 80%;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .btn-big:active {
-            transform: translateY(-1px);
-        }
-        .result-box {
-            background: #4d4d4dff;
-            border-radius: 25px;
-            padding: 25px;
-            margin: 25px 0;
-            text-align: center;
-            min-height: 180px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        .movie-title {
-            font-size: 2.3em;
-            color: #fffaffff;
-            padding: 10px;
-/*            margin: 15px 0;*/
-            font-weight: 900;
-        }
-        .loading {
-            color: #fffaffff;
-            font-size: 1.2em;
-            display: none;
-        }
-        .empty-state {
-            color: #fffaffff;
-            font-weight:100;
-            font-family: Nunito;
-            font-style: italic;
-        }
-        .list-btn {
-            background: #4e8387ff;
-            color: #1a1a1aff;
-            border: none;
-            font-weight: 900;
-            font-family: Nunito;
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-size: 1em;
-            cursor: pointer;
-            width: 100%;
-            margin: 10px 0;
-            transition: background 0.3s;
-        }
         
-        .group-btn{
-            display: flex;
-            gap: 20px;
-        }
-        .movie-list-container {
-            margin-top: 25px;
-            display: none; /* Начальное состояние - скрыт */
-        }
-        .movie-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            background: #4d4d4dff;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-        .delete-btn {
-            background: #dc3545;
-            border: none;
-            font-weight: 700;
-            font-family: Nunito;
-            color: #fffaffff;
-            padding: 10px 15px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 0.8em;
-        }
-        .delete-btn:hover {
-            background: #c82333;
-        }
-        
-        /* НОВЫЕ СТИЛИ ДЛЯ КНОПКИ "СМОТРЕТЬ ПОЗЖЕ" */
-        .postpone-btn {
-            background: none;
-            color: white;
-            border: solid 1px gray;
-            font-weight: 500;
-            font-family: Nunito;
-            padding: 12px 22px;
-            border-radius: 50px;
-            opacity: 0.6;
-            font-size: 0.9em;
-            cursor: pointer;
-/*            margin-top: 5px;*/
-            transition: all 0.3s ease;
-        }
-        
-        /* СТИЛИ ДЛЯ ВКЛАДКИ ОТЛОЖЕННЫХ ФИЛЬМОВ */
-        .tab-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            margin-bottom: 15px;
-        }
-        .tab-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 50px;
-            font-family: Nunito;
-            font-weight: 700;
-            cursor: pointer;
-            background: #333;
-            color: #fff;
-            transition: all 0.3s;
-        }
-        .tab-btn.active {
-            background: #4e8387ff;
-            font-weight: 900;
-            color: #1a1a1aff;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .postponed-badge {
-            display: absolute;
-            background: #FFA500;
-            color: #1a1a1aff;
-            font-size: 0.6em;
-            padding: 2px 8px;
-            border-radius: 10px;
-            margin-left: 8px;
-            font-weight: bold;
-        }
-
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
-            .container {
-                padding: 20px;
-                border-radius: 15px;
-            }
-            .nav-link {
-                padding: 12px 25px;
-                font-size: 1em;
-            }
-            .action-buttons {
-        display: flex;
-        gap: 10px;
-        justify-content: center;
-        margin-top: 20px;
-        flex-wrap: wrap;
-    }
-
-    .action-btn {
-        padding: 12px 24px;
-        border: none;
-        border-radius: 10px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        display: flex !important;
-        flex-wrap: nowrap !important;
-        white-space: nowrap !important;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        transition: all 0.3s ease;
-        text-decoration: none;
-    }
+#help-button {
+/*  margin-right: 210px;*/
+  margin-right: 10px;
+  height: 50px;
+  width: 50px;
+  background: none;
+  border:none;
+  background-image: url('icons/help.svg');
+  cursor: pointer;
+  z-index: 1000;
+  border: none;
 }
-    </style>
+    
+#changeColorsBtn {
+  margin-right: 10px;
+  height: 50px;
+  width: 50px;
+  background: none;
+  border:none;
+  background-image: url('icons/theme.svg');
+  cursor: pointer;
+  z-index: 1000;
+  border: none;
+}
+</style>
+<link href="style.css" rel="stylesheet"/>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <img class="logo" src="cine-logo.svg" height="45px;">
-        </div>
-        <div class="group-btn">
-        <button class="btn-big" id="random-btn">
-            Случайный фильм
-            </button>
-        <a class="add-btn" href="add.html">
-        <img class="add-btn" src="add-btn.svg">
-        </a>
-        </div>
-
-        <div class="loading" id="loading">
-        </div>
-
-        <div class="result-box" id="result">
-            <!-- Здесь появится случайный фильм -->
-            <div class="empty-state">
-                Здесь появится случайный фильм
-            </div>
-        </div>
-
-        <button class="list-btn" id="toggle-list-btn">
-            Показать список фильмов
-        </button>
-
-        <div class="tab-buttons" id="tab-buttons" style="display: none;">
-    <button class="tab-btn active" data-tab="active">
-        Активные фильмы
-        <span class="tab-counter" id="active-counter">0</span>
-    </button>
-    <button class="tab-btn" data-tab="postponed">
-        Отложенные
-        <span class="tab-counter" id="postponed-counter">0</span>
-    </button>
+<div id="splash-screen">
+ <div class="splash-logo" data-i18n="splashLogoTitle" data-i18n-attr="title">КОЛЛАПС</div>
+  <div class="splash-loader"></div>
 </div>
+<body oncontextmenu="return false">
 
-        <div class="movie-list-container" id="movies-list-container">
-            <div class="tab-content active" id="active-movies-tab">
-                <ul id="movies-list" style="list-style: none; padding: 0;">
-                    <!-- Список активных фильмов загрузится здесь -->
-                </ul>
-            </div>
-            
-            <div class="tab-content" id="postponed-movies-tab">
-                <ul id="postponed-list" style="list-style: none; padding: 0;">
-                    <!-- Список отложенных фильмов загрузится здесь -->
-                </ul>
-            </div>
-        </div>
-    </div>
 
-    <!-- Firebase SDK -->
-    <!-- ВАЖНО: Используйте ЭТУ версию -->
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     
-    <script>
-        // ========== ВАШ КОНФИГ FIREBASE ==========
-        const firebaseConfig = {
-            apiKey: "AIzaSyAOvoLXDIDZ2vVIqHLG8utXYA07yiheTkI",
-            authDomain: "cineroll-54934.firebaseapp.com",
-            projectId: "cineroll-54934",
-            storageBucket: "cineroll-54934.firebasestorage.app",
-            messagingSenderId: "158307828214",
-            appId: "1:158307828214:web:6d8ed57b6d79ed80e247d7"
-        };
+<!--
+<div class="lang-select-wrapper">
 
-        // ========== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==========
-        let db = null;
-        let currentRandomMovie = null;
-        
-        // ========== ИНИЦИАЛИЗАЦИЯ FIREBASE ==========
-        function initFirebase() {
-            try {
-                if (!firebase.apps.length) {
-                    firebase.initializeApp(firebaseConfig);
-                }
-                db = firebase.firestore();
-                console.log("Firebase подключен к проекту cineroll-54934");
-                return true;
-            } catch (error) {
-                console.error("Ошибка Firebase:", error);
-                return false;
-            }
-        }
+<div id="lang-container">
+  <div class='lang-icon'></div>
+  <select id="lang-selector" title="Change language">
+    <option value="ru">Русский</option>
+    <option value="en">English</option>
+  </select>
+</div>
+</div>
+-->
 
-       // ========== ОБНОВИТЬ СЧЕТЧИКИ ФИЛЬМОВ ==========
-async function updateCounters() {
-    if (!db) return;
     
-    try {
-        // Получаем ВСЕ фильмы
-        const snapshot = await db.collection('movies').get();
-        
-        let activeCount = 0;
-        let postponedCount = 0;
-        
-        // Считаем активные и отложенные фильмы
-        snapshot.forEach(doc => {
-            const movieData = doc.data();
-            if (movieData.isActive === false) {
-                postponedCount++;
-            } else {
-                activeCount++;
-            }
-        });
-        
-        // Получаем элементы счетчиков
-        const activeCounter = document.getElementById('active-counter');
-        const postponedCounter = document.getElementById('postponed-counter');
-        
-        // Обновляем текст счетчиков
-        activeCounter.textContent = activeCount;
-        postponedCounter.textContent = postponedCount;
-        
-        // Добавляем/удаляем класс zero в зависимости от значения
-        if (activeCount === 0) {
-            activeCounter.classList.add('zero');
-        } else {
-            activeCounter.classList.remove('zero');
-        }
-        
-        if (postponedCount === 0) {
-            postponedCounter.classList.add('zero');
-        } else {
-            postponedCounter.classList.remove('zero');
-        }
-        
-        console.log(`Счетчики обновлены: активные=${activeCount}, отложенные=${postponedCount}`);
-        
-    } catch (error) {
-        console.error("Ошибка обновления счетчиков:", error);
-    }
+<div id="overlay"></div>
+
+<!-- Кнопка окончания игры тест -->   
+<!--
+<button id="force-end" style="position: absolute; top: 10px; right: 10px; z-index: 3000;">
+Закончить игру
+</button>
+-->
+<!-- Кнопка окончания игры тест -->
+<div id="game-scaler">
+<div id="game-wrapper">
+<div id="container">
+   <nav id="menu-buttons">
+       <button id="newGame" data-i18n="newGameTitle" style="filter: box-shadow(4px 4px 10px #1a1a1a);" data-i18n-attr="title" title="Новая игра"></button>
+       <button id="help-button" style="filter: box-shadow(4px 4px 10px #1a1a1a);" data-i18n="helpButtonTitle" data-i18n-attr="title" title="Справка"></button>
+       <button id="changeColorsBtn" style="filter: box-shadow(4px 4px 10px #1a1a1a);" data-i18n="changeColorButtonTitle" data-i18n-attr="title" title="Сменить цвета"></button>
+       <button class="right" id="dropBlocksBtn" style="filter: box-shadow(4px 4px 10px #1a1a1a);" data-i18n="dropBlockBtnTitle" data-i18n-attr="title"><span id="dropCounter">5</span></button>
+       <button id="repaintBtn" data-i18n="repaintBtnTitle" style="filter: box-shadow(4px 4px 10px #1a1a1a);" data-i18n-attr="title"><svg id="cancelRepaint" viewBox="0 0 24 24" width="32" height="32"
+     style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); cursor: pointer; z-index: 2;">
+  <circle cx="12" cy="12" r="11" fill="#F24236" stroke="#333" stroke-width="2"/>
+  <line x1="8" y1="8" x2="16" y2="16" stroke="#333" stroke-width="2"/>
+  <line x1="16" y1="8" x2="8" y2="16" stroke="#333" stroke-width="2"/>
+           </svg><span id="repaintCounter">3</span></button>
+       
+       
+       
+<!--
+       <div id="darkModeToggle">
+           <input id="toggleSwitch" type="checkbox"/>
+           <label for="toggleSwitch"></label>
+           </div>
+-->
+   </nav>
+  <div id="score-wrapper"><span id="score">0</span></div>
+  <div id="board"></div>
+</div>
+</div>
+</div>
+<script>
+function scaleGameWrapper() {
+  const baseWidth = 410;
+  const baseHeight = 760;
+
+  const scale = Math.min(
+    window.innerWidth / baseWidth,
+    window.innerHeight / baseHeight
+  );
+
+  const scaler = document.getElementById('game-scaler');
+  scaler.style.transform = `translate(-50%, -50%) scale(${scale})`;
 }
 
-        // ========== ПОЛУЧИТЬ СЛУЧАЙНЫЙ ФИЛЬМ ==========
-        async function getRandomMovie() {
-            if (!db) {
-                showError("Ошибка подключения к базе данных");
-                return;
-            }
-            
-            const loading = document.getElementById('loading');
-            const resultDiv = document.getElementById('result');
-            
-            loading.style.display = 'block';
-            resultDiv.innerHTML = '';
-            
-            try {
-                // Получаем ВСЕ фильмы
-                const snapshot = await db.collection('movies').get();
-                
-                if (snapshot.empty) {
-                    resultDiv.innerHTML = `
-                        <div style="color: #6c757d; padding: 30px;">
-                            <h3 style="color: #dc3545;">Нет доступных фильмов!</h3>
-                            <p>Все фильмы отложены или список пуст</p>
-                            <button class="postpone-btn" onclick="checkAndReturnPostponed()" style="margin-top: 15px;">
-                                Проверить отложенные
-                            </button>
-                        </div>
-                    `;
-                    // Обновляем счетчики (все 0)
-                    updateCounters();
-                    return;
-                }
-                
-                // Фильтруем активные фильмы на клиенте
-                const activeMovies = [];
-                snapshot.forEach(doc => {
-                    const movieData = doc.data();
-                    // Фильтруем: isActive не равен false
-                    if (movieData.isActive !== false) {
-                        activeMovies.push({
-                            id: doc.id,
-                            title: movieData.title,
-                            added: movieData.createdAt?.toDate() || new Date()
-                        });
-                    }
-                });
-                
-                if (activeMovies.length === 0) {
-                    resultDiv.innerHTML = `
-                        <div style="color: #6c757d; padding: 30px;">
-                            <h3 style="color: #dc3545;">Нет активных фильмов!</h3>
-                            <p>Все фильмы отложены</p>
-                            <button class="postpone-btn" onclick="checkAndReturnPostponed()" style="margin-top: 15px;">
-                                Проверить отложенные
-                            </button>
-                        </div>
-                    `;
-                    // Обновляем счетчики
-                    updateCounters();
-                    return;
-                }
-                
-                const randomIndex = Math.floor(Math.random() * activeMovies.length);
-                const randomMovie = activeMovies[randomIndex];
-                currentRandomMovie = randomMovie;
-                
-                // Формируем URL для поиска
-                const kinopoiskUrl = `https://www.kinopoisk.ru/index.php?kp_query=${encodeURIComponent(randomMovie.title)}`;
-                const vkSearchUrl = `https://vk.com/video?q=${encodeURIComponent(randomMovie.title + ' фильм')}&section=search`;
-                
-                // Создаем HTML с кнопками
-                resultDiv.innerHTML = `
-            <div style="animation: fadeIn 0.5s;">
-                <div style="font-family: Nunito; font-weight: 900; font-size: 2.2em;" class="movie-title">${randomMovie.title}</div>
-                <div class="action-buttons">
-                    <button 
-                       onclick="watchMovie('${randomMovie.id}', '${randomMovie.title.replace(/'/g, "\\'")}', 'kinopoisk', '${kinopoiskUrl}')"
-                       style="padding: 12px 22px; border-radius: 50px; font-family: 'Nunito', sans-serif; font-weight: 900; border: none; background: #dc3545; font-size: 16px; color: white; cursor: pointer; margin: 2px;">
-                        КиноПоиск
-                    </button>
-                    
-                    <button 
-                       onclick="watchMovie('${randomMovie.id}', '${randomMovie.title.replace(/'/g, "\\'")}', 'vk', '${vkSearchUrl}')"
-                       style="padding: 12px 22px; border-radius: 50px; font-family: 'Nunito', sans-serif; font-weight: 900; border: none; background: #4e8387ff; font-size: 16px; color: white; cursor: pointer; margin: 2px;">
-                        VK
-                    </button>
-                    
-                    <button class="postpone-btn" onclick="postponeMovie('${randomMovie.id}', '${randomMovie.title.replace(/'/g, "\\'")}')">
-                        Смотреть позже
-                    </button>
-                </div>
-                <div style="margin-top: 10px; padding-bottom: 15px;font-size: 0.7em; color: #999; text-align: center;">
-                    Фильм будет отложен на 24 часа
-                </div>
-            </div>
-        `;
-                
-            } catch (error) {
-                showError(`Ошибка: ${error.message}`);
-                console.error("Ошибка получения фильма:", error);
-            } finally {
-                loading.style.display = 'none';
-            }
-        }
+window.addEventListener('resize', scaleGameWrapper);
+window.addEventListener('load', scaleGameWrapper);
+</script>
+<!--
+<style>
+#orientation-lock {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: #000;
+  color: white;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  font-size: 24px;
+  text-align: center;
+  padding: 20px;
+}
+</style>
+-->
 
-        // ========== ПОСМОТРЕТЬ ФИЛЬМ (УДАЛИТЬ ИЗ СПИСКА) ==========
-        async function watchMovie(movieId, movieTitle, platform, url) {
-            if (!db) return;
-            
-            if (confirm(`Открыть ${platform === 'kinopoisk' ? 'КиноПоиск' : 'VK'} и удалить фильм "${movieTitle}" из списка?`)) {
-                try {
-                    // Удаляем фильм из основной коллекции
-                    await db.collection('movies').doc(movieId).delete();
-                    
-                    // Также удаляем все записи об этом фильме из postponedMovies
-                    const postponedSnapshot = await db.collection('postponedMovies')
-                        .where('movieId', '==', movieId)
-                        .get();
-                    
-                    if (!postponedSnapshot.empty) {
-                        postponedSnapshot.forEach(async (doc) => {
-                            await db.collection('postponedMovies').doc(doc.id).delete();
-                        });
-                    }
-                    
-                    // Обновляем счетчики
-                    updateCounters();
-                    
-                    // Обновляем списки
-                    loadMovieList();
-                    loadPostponedMovies();
-                    
-                    // Открываем поиск
-                    window.open(url, '_blank', 'noopener,noreferrer');
-                    
-                    // Показываем следующий случайный фильм
-                    await getRandomMovie();
-                    
-                    // Не показываем alert, чтобы не прерывать пользователя
-                    
-                } catch (error) {
-                    alert("Ошибка при удалении фильма: " + error.message);
-                    console.error("Ошибка удаления фильма:", error);
-                }
-            }
-        }
+<!--
+<div id="orientation-lock">Поверни устройство вертикально<br>для продолжения игры</div>
 
-        // ========== ОТЛОЖИТЬ ФИЛЬМ НА 24 ЧАСА ==========
-        async function postponeMovie(movieId, movieTitle) {
-            if (!db || !currentRandomMovie) return;
-            
-            const loading = document.getElementById('loading');
-            loading.style.display = 'block';
-            
-            try {
-                // Получаем текущее время
-                const now = new Date();
-                const returnTime = new Date(now.getTime() + 24 * 60 * 60 * 1000); // +24 часа
-                
-                // 1. Обновляем фильм: помечаем как неактивный и устанавливаем время возврата
-                await db.collection('movies').doc(movieId).update({
-                    isActive: false,
-                    postponedUntil: returnTime,
-                    postponedAt: now
-                });
-                
-                // 2. Добавляем в коллекцию отложенных для истории
-                await db.collection('postponedMovies').add({
-                    movieId: movieId,
-                    title: movieTitle,
-                    postponedAt: now,
-                    returnAt: returnTime,
-                    returned: false
-                });
-                
-                // 3. Обновляем счетчики
-                updateCounters();
-                
-                // 4. Показываем следующий случайный фильм
-                await getRandomMovie();
-                
-                // 5. Обновляем списки
-                loadMovieList();
-                loadPostponedMovies();
-                
-            } catch (error) {
-                console.error("Ошибка при откладывании фильма:", error);
-                alert("Ошибка при откладывании фильма");
-            } finally {
-                loading.style.display = 'none';
-            }
-        }
-
-        // ========== ЗАГРУЗИТЬ СПИСОК АКТИВНЫХ ФИЛЬМОВ ==========
-        async function loadMovieList() {
-            if (!db) return;
-            
-            const listElement = document.getElementById('movies-list');
-            listElement.innerHTML = '<li style="text-align: center; color: #666;">Загрузка...</li>';
-            
-            try {
-                // Получаем ВСЕ фильмы
-                const snapshot = await db.collection('movies').get();
-                
-                listElement.innerHTML = '';
-                
-                if (snapshot.empty) {
-                    listElement.innerHTML = `
-                        <li style="text-align: center; color: #6c757d; padding: 20px; list-style-type: none !important;">
-                            Нет фильмов
-                        </li>
-                    `;
-                    return;
-                }
-                
-                const movies = [];
-                snapshot.forEach(doc => {
-                    const movieData = doc.data();
-                    movies.push({
-                        id: doc.id,
-                        ...movieData
-                    });
-                });
-                
-                // Фильтруем активные фильмы на клиенте
-                const activeMovies = movies.filter(movie => movie.isActive !== false);
-                
-                if (activeMovies.length === 0) {
-                    listElement.innerHTML = `
-                        <li style="text-align: center; color: #6c757d; padding: 20px; list-style-type: none !important;">
-                            Нет активных фильмов
-                        </li>
-                    `;
-                    return;
-                }
-                
-                // Сортируем на клиенте по дате добавления (новые сначала)
-                activeMovies.sort((a, b) => {
-                    const dateA = a.createdAt?.toDate() || new Date(0);
-                    const dateB = b.createdAt?.toDate() || new Date(0);
-                    return dateB - dateA;
-                });
-                
-                activeMovies.forEach(movie => {
-                    const li = document.createElement('li');
-                    li.className = 'movie-item';
-                    li.innerHTML = `
-                        <div>
-                            <div style="font-family: Nunito; font-weight: 700; color: #fffaffff; margin-bottom: 8px; font-size: 1.2em;">${movie.title}</div>
-                            <div style="font-family: Nunito; font-size: 0.7em; color: #b3b3b3ff;">
-                                Добавлен: ${formatDate(movie.createdAt?.toDate())}
-                            </div>
-                        </div>
-                        <button class="delete-btn" data-id="${movie.id}">
-                            Удалить
-                        </button>
-                    `;
-                    listElement.appendChild(li);
-                });
-                
-                // Добавляем обработчики удаления
-                document.querySelectorAll('.delete-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const movieId = this.getAttribute('data-id');
-                        deleteMovie(movieId);
-                    });
-                });
-                
-            } catch (error) {
-                console.error("Ошибка загрузки списка:", error);
-                listElement.innerHTML = `
-                    <li style="color: #dc3545; text-align: center;">
-                        Ошибка загрузки: ${error.message}
-                    </li>
-                `;
-            }
-        }
-
-        // ========== ЗАГРУЗИТЬ СПИСОК ОТЛОЖЕННЫХ ФИЛЬМОВ ==========
-        async function loadPostponedMovies() {
-            if (!db) return;
-            
-            const listElement = document.getElementById('postponed-list');
-            listElement.innerHTML = '<li style="text-align: center; color: #666;">Загрузка...</li>';
-            
-            try {
-                // Получаем ВСЕ фильмы
-                const snapshot = await db.collection('movies').get();
-                
-                listElement.innerHTML = '';
-                
-                if (snapshot.empty) {
-                    listElement.innerHTML = `
-                        <li style="text-align: center; color: #6c757d; padding: 20px; list-style-type: none !important;">
-                            Нет отложенных фильмов
-                        </li>
-                    `;
-                    return;
-                }
-                
-                const movies = [];
-                snapshot.forEach(doc => {
-                    const movieData = doc.data();
-                    movies.push({
-                        id: doc.id,
-                        ...movieData
-                    });
-                });
-                
-                // Фильтруем отложенные фильмы на клиенте
-                const postponedMovies = movies.filter(movie => movie.isActive === false);
-                
-                if (postponedMovies.length === 0) {
-                    listElement.innerHTML = `
-                        <li style="text-align: center; color: #6c757d; padding: 20px; list-style-type: none !important;">
-                            Нет отложенных фильмов
-                        </li>
-                    `;
-                    return;
-                }
-                
-                const now = new Date();
-                
-                // Сортируем по времени возврата (сначала те, что раньше вернутся)
-                postponedMovies.sort((a, b) => {
-                    const dateA = a.postponedUntil?.toDate() || new Date(0);
-                    const dateB = b.postponedUntil?.toDate() || new Date(0);
-                    return dateA - dateB;
-                });
-                
-                postponedMovies.forEach(movie => {
-                    const returnTime = movie.postponedUntil?.toDate();
-                    const timeLeft = returnTime ? Math.max(0, returnTime - now) : 0;
-                    const hoursLeft = Math.floor(timeLeft / (1000 * 60 * 60));
-                    const minutesLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-                    
-                    const li = document.createElement('li');
-                    li.className = 'movie-item';
-                    
-                    let timeInfo = '';
-                    if (timeLeft > 0) {
-                        timeInfo = `
-                            <div style="font-family: Nunito; font-size: 0.7em; color: #FFA500;">
-                                Вернётся через: ${hoursLeft}ч ${minutesLeft}м
-                            </div>
-                            <div style="font-family: Nunito; font-size: 0.7em; color: #b3b3b3ff;">
-                                До: ${returnTime ? formatDate(returnTime) : 'неизвестно'}
-                            </div>
-                        `;
-                    } else {
-                        timeInfo = `
-                            <div style="font-family: Nunito; font-size: 0.7em; color: #75a744;">
-                                Готов к возврату!
-                            </div>
-                        `;
-                    }
-                    
-                    li.innerHTML = `
-                        <div>
-                            <div style="font-family: Nunito; font-weight: 700; color: #fffaffff; margin-bottom: 8px; font-size: 1.2em;">
-                                ${movie.title}
-                            </div>
-                            ${timeInfo}
-                        </div>
-                        <button class="delete-btn" data-id="${movie.id}" data-postponed="true">
-                            Вернуть
-                        </button>
-                    `;
-                    listElement.appendChild(li);
-                });
-                
-                // Добавляем обработчики для кнопки "Вернуть сейчас"
-                document.querySelectorAll('.delete-btn[data-postponed="true"]').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const movieId = this.getAttribute('data-id');
-                        returnMovieNow(movieId);
-                    });
-                });
-                
-            } catch (error) {
-                console.error("Ошибка загрузки отложенных фильмов:", error);
-                listElement.innerHTML = `
-                    <li style="color: #dc3545; text-align: center;">
-                        Ошибка загрузки отложенных фильмов: ${error.message}
-                    </li>
-                `;
-            }
-        }
-
-        // ========== ВЕРНУТЬ ФИЛЬМ СЕЙЧАС ==========
-        async function returnMovieNow(movieId) {
-            if (!db) return;
-            
-            if (confirm("Вернуть этот фильм в активный список сейчас?")) {
-                try {
-                    // 1. Обновляем фильм в основной коллекции
-                    await db.collection('movies').doc(movieId).update({
-                        isActive: true,
-                        postponedUntil: null
-                    });
-                    
-                    // 2. Удаляем все записи об этом фильме из postponedMovies
-                    const postponedSnapshot = await db.collection('postponedMovies')
-                        .where('movieId', '==', movieId)
-                        .where('returned', '==', false)
-                        .get();
-                    
-                    if (!postponedSnapshot.empty) {
-                        postponedSnapshot.forEach(async (doc) => {
-                            await db.collection('postponedMovies').doc(doc.id).delete();
-                        });
-                    }
-                    
-                    // 3. Обновляем счетчики
-                    updateCounters();
-                    
-                    // 4. Обновляем списки
-                    loadMovieList();
-                    loadPostponedMovies();
-                    
-                } catch (error) {
-                    alert("Ошибка возврата фильма: " + error.message);
-                    console.error("Ошибка возврата фильма:", error);
-                }
-            }
-        }
-
-        // ========== ПРОВЕРИТЬ И ВЕРНУТЬ ОТЛОЖЕННЫЕ ФИЛЬМЫ ==========
-        async function checkAndReturnPostponed() {
-            if (!db) return;
-            
-            const loading = document.getElementById('loading');
-            loading.style.display = 'block';
-            
-            try {
-                // Получаем ВСЕ фильмы
-                const snapshot = await db.collection('movies').get();
-                
-                const now = new Date();
-                let count = 0;
-                
-                // Проходим по всем фильмам и проверяем, какие пора вернуть
-                const updates = [];
-                snapshot.forEach(doc => {
-                    const movie = doc.data();
-                    const returnTime = movie.postponedUntil?.toDate();
-                    
-                    // Если фильм отложен и время возврата наступило
-                    if (movie.isActive === false && returnTime && returnTime <= now) {
-                        updates.push({
-                            id: doc.id,
-                            title: movie.title
-                        });
-                        count++;
-                    }
-                });
-                
-                if (count === 0) {
-                    alert("Нет фильмов, которые пора вернуть");
-                    return;
-                }
-                
-                // Обновляем все фильмы, которые пора вернуть
-                for (const update of updates) {
-                    // 1. Обновляем фильм в основной коллекции
-                    await db.collection('movies').doc(update.id).update({
-                        isActive: true,
-                        postponedUntil: null
-                    });
-                    
-                    // 2. Удаляем все записи об этом фильме из postponedMovies
-                    const postponedSnapshot = await db.collection('postponedMovies')
-                        .where('movieId', '==', update.id)
-                        .where('returned', '==', false)
-                        .get();
-                    
-                    if (!postponedSnapshot.empty) {
-                        postponedSnapshot.forEach(async (doc) => {
-                            await db.collection('postponedMovies').doc(doc.id).delete();
-                        });
-                    }
-                }
-                
-                alert(`Возвращено ${count} фильм(ов) в активный список!`);
-                
-                // Обновляем счетчики
-                updateCounters();
-                
-                // Обновляем списки и показываем случайный фильм
-                loadMovieList();
-                loadPostponedMovies();
-                await getRandomMovie();
-                
-            } catch (error) {
-                console.error("Ошибка проверки отложенных фильмов:", error);
-                alert("Ошибка при проверке отложенных фильмов");
-            } finally {
-                loading.style.display = 'none';
-            }
-        }
-
-        // ========== УДАЛИТЬ ФИЛЬМ ==========
-        async function deleteMovie(movieId) {
-            if (!db) return;
-            
-            if (confirm("Удалить этот фильм из списка?")) {
-                try {
-                    // Удаляем фильм из основной коллекции
-                    await db.collection('movies').doc(movieId).delete();
-                    
-                    // Также удаляем все записи об этом фильме из postponedMovies
-                    const postponedSnapshot = await db.collection('postponedMovies')
-                        .where('movieId', '==', movieId)
-                        .get();
-                    
-                    if (!postponedSnapshot.empty) {
-                        postponedSnapshot.forEach(async (doc) => {
-                            await db.collection('postponedMovies').doc(doc.id).delete();
-                        });
-                    }
-                    
-                    // Обновляем счетчики
-                    updateCounters();
-                    
-                    // Обновляем списки
-                    loadMovieList();
-                    loadPostponedMovies();
-                    
-                } catch (error) {
-                    alert("Ошибка удаления: " + error.message);
-                }
-            }
-        }
-
-        // ========== ИНИЦИАЛИЗИРОВАТЬ БАЗУ ДАННЫХ ==========
-        async function initializeDatabase() {
-            try {
-                // Проверяем, нужно ли обновить структуру существующих фильмов
-                const snapshot = await db.collection('movies').limit(1).get();
-                
-                if (!snapshot.empty) {
-                    const updates = [];
-                    const allMovies = await db.collection('movies').get();
-                    
-                    allMovies.forEach(doc => {
-                        const movieData = doc.data();
-                        // Если нет поля isActive, добавляем его
-                        if (movieData.isActive === undefined) {
-                            updates.push(
-                                db.collection('movies').doc(doc.id).update({
-                                    isActive: true,
-                                    postponedUntil: null
-                                })
-                            );
-                        }
-                    });
-                    
-                    // Выполняем все обновления
-                    if (updates.length > 0) {
-                        await Promise.all(updates);
-                        console.log(`Обновлено ${updates.length} фильмов`);
-                    }
-                }
-            } catch (error) {
-                console.error("Ошибка инициализации базы:", error);
-            }
-        }
-
-        // ========== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ==========
-        function switchTab(tabName) {
-            // Обновляем кнопки вкладок
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.dataset.tab === tabName) {
-                    btn.classList.add('active');
-                }
-            });
-            
-            // Показываем соответствующую вкладку
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            
-            if (tabName === 'active') {
-                document.getElementById('active-movies-tab').classList.add('active');
-                loadMovieList();
-            } else {
-                document.getElementById('postponed-movies-tab').classList.add('active');
-                loadPostponedMovies();
-            }
-        }
-
-        // ========== ПОКАЗАТЬ/СКРЫТЬ СПИСОК ==========
-        function toggleMovieList() {
-            const container = document.getElementById('movies-list-container');
-            const tabButtons = document.getElementById('tab-buttons');
-            const button = document.getElementById('toggle-list-btn');
-            
-            if (container.style.display === 'block') {
-                // Скрываем список
-                container.style.display = 'none';
-                tabButtons.style.display = 'none';
-                button.textContent = 'Показать список фильмов';
-            } else {
-                // Показываем список
-                container.style.display = 'block';
-                tabButtons.style.display = 'flex';
-                button.textContent = 'Скрыть список';
-                // Загружаем активные фильмы при открытии
-                switchTab('active');
-                loadMovieList();
-            }
-        }
-
-        // ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
-        function showError(message) {
-            const resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = `
-                <div style="color: #dc3545; text-align: center;">
-                    <h3>Ошибка</h3>
-                    <p>${message}</p>
-                </div>
-            `;
-        }
-        
-        function formatDate(date) {
-            if (!date) return 'неизвестно';
-            return date.toLocaleDateString('ru-RU', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-
-        // ========== ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ ==========
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("Запуск CineRoll...");
-    
-    // Инициализируем Firebase
-    if (!initFirebase()) {
-        showError("Не удалось подключиться к базе данных");
-        return;
-    }
-    
-    // Инициализируем базу данных
-    initializeDatabase();
-    
-    // Инициализируем счетчики (сразу после инициализации Firebase)
-    updateCounters();
-    
-    // Назначаем обработчики
-    document.getElementById('random-btn').addEventListener('click', getRandomMovie);
-    document.getElementById('toggle-list-btn').addEventListener('click', toggleMovieList);
-    
-    // Обработчики для вкладок
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            switchTab(this.dataset.tab);
-        });
-    });
-    
-    console.log("CineRoll готов к работе!");
-});
-        
-        // Функция для отслеживания действий
-        function trackAction(action, movieTitle) {
-            console.log(`Действие: ${action}, Фильм: ${movieTitle}`);
-        }
-    </script>
 <script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then(registration => {
-        console.log('Service Worker зарегистрирован:', registration);
-      })
-      .catch(error => {
-        console.log('Ошибка регистрации:', error);
-      });
+function checkOrientation() {
+  const lock = document.getElementById('orientation-lock');
+  if (window.innerWidth > window.innerHeight) {
+    lock.style.display = 'flex'; // Показываем блок, если альбомная ориентация
+  } else {
+    lock.style.display = 'none'; // Скрываем блок в портретной ориентации
+  }
+}
+window.addEventListener('resize', checkOrientation);
+window.addEventListener('load', checkOrientation);
+</script>
+-->
+
+
+<script>
+const colorSchemes = [
+  // ["#F3F4F6", "#8E0413", "#CB0B0A", "#568D66", "#004733"],  // Рождество
+  ["#F45D01", "#97CC04", "#2D7DD2", "#EEB902", "#68B0AB"],  // Классическая цветная
+  ["#565554", "#2E86AB", "#F6F5AE", "#F5F749", "#F24236"],  // Трансформер
+  ["#EE6352", "#08B2E3", "#EFE9F4", "#57A773", "#484D6D"],  // Пластилин
+  ["#006E90", "#F18F01", "#ADCAD6", "#99C24D", "#41BBD9"],  // Спорткар
+  ["#E6C229", "#F17105", "#D11149", "#6610F2", "#1A8FE3"],  // Мемфис
+  ["#FF595E", "#FFCA3A", "#8AC926", "#1982C4", "#6A4C93"],  // Цветные мелки
+  ["#272727", "#FED766", "#009FB7", "#696773", "#EFF1F3"],  // Осенний вечер
+  ["#403F4C", "#E84855", "#F9DC5C", "#3185FC", "#EFBCD5"]   // Пастель
+];
+
+window.colors = colorSchemes[0];
+let currentColorIndex = 0;
+const rows = 13, cols = 9, cellSize = 42;
+const board = [];
+let score = 0;
+
+const boardEl = document.getElementById('board');
+boardEl.addEventListener("mouseleave", clearHighlights);
+const scoreEl = document.getElementById('score');
+document.getElementById("newGame").onclick = () => init();
+
+function init() {
+  boardEl.innerHTML = "";
+  board.length = 0;
+  score = 0;
+  scoreEl.textContent = "0";
+  boardEl.style.width = `${cols * cellSize}px`;
+  boardEl.style.height = `${rows * cellSize}px`;
+
+  createBoard();
+  positionAll();
+
+  // Сброс счётчиков кнопок
+  dropUses = maxDropUses;
+  repaintUses = maxRepaintUses;
+  updateDropButtonState();
+  updateRepaintButtonState();
+  
+  console.log("Игра полностью инициализирована");
+}
+
+// 🟩 Создание доски
+function createBoard() {
+  for (let y = 0; y < rows; y++) {
+    board[y] = [];
+    for (let x = 0; x < cols; x++) {
+      const colorIndex = Math.floor(Math.random() * colors.length);
+      const div = document.createElement("div");
+      div.className = "cell";
+      div.style.backgroundColor = colors[colorIndex];
+      div.dataset.x = x;
+      div.dataset.y = y;
+      board[y][x] = { colorIndex, div };
+      boardEl.appendChild(div);
+      div.addEventListener("mouseenter", handleHover);
+      div.addEventListener("click", handleClick);
+    }
+  }
+}
+
+// 🎨 Смена палитры
+document.getElementById("changeColorsBtn").addEventListener("click", () => {
+  currentColorIndex = (currentColorIndex + 1) % colorSchemes.length;
+  colors = colorSchemes[currentColorIndex];
+  reapplyColors();
+});
+
+// 🔁 Перекраска
+function reapplyColors() {
+  const oldColors = colorSchemes[(currentColorIndex - 1 + colorSchemes.length) % colorSchemes.length];
+  const newColors = colors;
+
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      const cell = board[y][x];
+      if (cell) {
+        const oldColor = oldColors[cell.colorIndex];
+        let newIndex = newColors.indexOf(oldColor);
+        if (newIndex === -1) newIndex = cell.colorIndex % newColors.length;
+        cell.colorIndex = newIndex;
+        cell.div.style.backgroundColor = newColors[newIndex];
+      }
+    }
+  }
+}
+
+// 📦 Позиционирование
+function positionAll() {
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      const cell = board[y][x];
+      if (cell && cell.div) {
+        cell.div.style.left = `${x * cellSize}px`;
+        cell.div.style.top = `${y * cellSize}px`;
+      }
+    }
+  }
+}
+
+// ✨ Подсветка при наведении
+function handleHover(e) {
+  const x = +e.target.dataset.x;
+  const y = +e.target.dataset.y;
+  const group = getGroup(x, y);
+  clearHighlights();
+  if (group.length >= 2) {
+    group.forEach(p => board[p.y][p.x].div.classList.add("highlight"));
+  }
+}
+
+// ❌ Очистка подсветки
+function clearHighlights() {
+  document.querySelectorAll(".highlight").forEach(d => d.classList.remove("highlight"));
+}
+
+// 👆 Обработка клика
+function handleClick(e) {
+  const x = +e.target.dataset.x;
+  const y = +e.target.dataset.y;
+  const group = getGroup(x, y);
+  if (group.length < 2) return;
+
+  group.forEach(p => {
+    boardEl.removeChild(board[p.y][p.x].div);
+    board[p.y][p.x] = null;
+  });
+
+  score += group.length * (group.length - 1);
+  scoreEl.textContent = score;
+
+  collapse(() => {
+    if (!hasMoves()) {
+      setTimeout(() => showGameOver(score), 200);
+    }
   });
 }
+
+// 🔍 Поиск группы одного цвета
+function getGroup(x, y) {
+  const cell = board[y][x];
+  if (!cell) return [];
+  const color = colors[cell.colorIndex];
+  const visited = Array.from({ length: rows }, () => Array(cols).fill(false));
+  const group = [];
+  const stack = [{ x, y }];
+
+  while (stack.length) {
+    const { x, y } = stack.pop();
+    if (x < 0 || x >= cols || y < 0 || y >= rows) continue;
+    if (visited[y][x]) continue;
+
+    const currentCell = board[y][x];
+    if (!currentCell) continue;
+    const currentColor = colors[currentCell.colorIndex];
+    if (currentColor !== color) continue;
+
+    visited[y][x] = true;
+    group.push({ x, y });
+    stack.push({ x: x + 1, y }, { x: x - 1, y }, { x, y: y + 1 }, { x, y: y - 1 });
+  }
+
+  return group;
+}
+
+// 🧹 Обрушение и сдвиг
+function collapse(callback) {
+  for (let x = 0; x < cols; x++) {
+    let pointer = rows - 1;
+    for (let y = rows - 1; y >= 0; y--) {
+      if (board[y][x]) {
+        if (y !== pointer) {
+          board[pointer][x] = board[y][x];
+          board[pointer][x].div.dataset.y = pointer;
+          board[y][x] = null;
+        }
+        pointer--;
+      }
+    }
+  }
+
+  let writeCol = 0;
+  for (let readCol = 0; readCol < cols; readCol++) {
+    if (board.some(row => row[readCol])) {
+      if (writeCol !== readCol) {
+        for (let y = 0; y < rows; y++) {
+          board[y][writeCol] = board[y][readCol];
+          if (board[y][writeCol]) {
+            board[y][writeCol].div.dataset.x = writeCol;
+          }
+          board[y][readCol] = null;
+        }
+      }
+      writeCol++;
+    }
+  }
+
+  for (let x = writeCol; x < cols; x++) {
+    for (let y = 0; y < rows; y++) {
+      board[y][x] = null;
+    }
+  }
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      positionAll();
+      if (callback) setTimeout(callback, 300);
+    });
+  });
+}
+
+// ❓ Есть ли ещё ходы?
+function hasMoves() {
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      const cell = board[y][x];
+      if (!cell) continue;
+      const currentColor = colors[cell.colorIndex];
+      for (const [dx, dy] of [[1, 0], [0, 1]]) {
+        const nx = x + dx, ny = y + dy;
+        if (nx < cols && ny < rows) {
+          const neighbor = board[ny][nx];
+          if (neighbor && colors[neighbor.colorIndex] === currentColor) {
+            return true;
+          }
+        }
+      }
+    }
+  }
+  return false;
+}
+
+// ❗ Обработка движения вне ячеек
+boardEl.addEventListener("mousemove", (e) => {
+  const target = e.target;
+  if (!target.classList.contains("cell")) {
+    clearHighlights();
+  }
+});
+boardEl.addEventListener("touchmove", (e) => {
+  const touch = e.touches[0];
+  const target = document.elementFromPoint(touch.clientX, touch.clientY);
+  if (!target || !target.classList.contains("cell")) {
+    clearHighlights();
+  }
+});
+
+// Запуск игры после полной загрузки страницы
+if (document.readyState === "complete") {
+  init();
+} else {
+  window.addEventListener("load", init);
+}
 </script>
+
+<script>
+// Настройки ограничений
+const maxDropUses = 5;
+const maxRepaintUses = 3;
+let dropUses = maxDropUses;
+let repaintUses = maxRepaintUses;
+
+const dropBtn = document.getElementById("dropBlocksBtn");
+const repaintBtn = document.getElementById("repaintBtn");
+
+function updateDropButtonState() {
+  const counter = document.getElementById("dropCounter");
+  dropBtn.disabled = dropUses <= 0;
+  dropBtn.classList.toggle("disabled", dropUses <= 0);
+  counter.textContent = dropUses;
+  counter.style.background = dropUses <= 0 ? "#F24236" : "";
+}
+
+function updateRepaintButtonState() {
+  const counter = document.getElementById("repaintCounter");
+  repaintBtn.disabled = repaintUses <= 0;
+  repaintBtn.classList.toggle("disabled", repaintUses <= 0);
+  counter.textContent = repaintUses;
+  counter.style.background = repaintUses <= 0 ? "#F24236" : "";
+}
+
+// Сразу обновляем кнопки при загрузке
+updateDropButtonState();
+updateRepaintButtonState();
+
+// Добавить 7 случайных блоков
+dropBtn.addEventListener("click", () => {
+  if (dropUses <= 0) return;
+
+  const emptyCells = [];
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      if (!board[y][x]) emptyCells.push({ x, y });
+    }
+  }
+
+  if (emptyCells.length === 0) return;
+
+  shuffleArray(emptyCells);
+  const toAdd = Math.min(7, emptyCells.length);
+  for (let i = 0; i < toAdd; i++) {
+    const { x, y } = emptyCells[i];
+    const colorIndex = Math.floor(Math.random() * colors.length);
+    const div = document.createElement("div");
+    div.className = "cell";
+    div.style.backgroundColor = colors[colorIndex];
+    div.dataset.x = x;
+    div.dataset.y = y;
+    board[y][x] = { colorIndex, div };
+    boardEl.appendChild(div);
+    div.addEventListener("mouseenter", handleHover);
+    div.addEventListener("click", handleClick);
+  }
+
+  positionAll();
+  collapse();
+
+  dropUses--;
+  updateDropButtonState();
+});
+
+// Перекрасить выбранный блок
+let repaintSelected = null;
+
+const cancelRepaintIcon = document.getElementById("cancelRepaint");
+
+function cancelRepaint() {
+  repaintSelected = null;
+  repaintBtn.classList.remove("active");
+  dropBtn.disabled = dropUses <= 0;
+  clearHighlighting();
+  cancelRepaintIcon.style.display = "none";
+}
+
+repaintBtn.addEventListener("click", () => {
+  if (repaintUses <= 0) return;
+
+  // Если уже активен — отключаем
+  if (repaintSelected) {
+    cancelRepaint();
+    return;
+  }
+
+  // Иначе — активируем
+  repaintSelected = true;
+  repaintBtn.classList.add("active");
+  dropBtn.disabled = true;
+  cancelRepaintIcon.style.display = "block";
+
+  highlightSingletons();
+});
+
+// Выделить одиночные блоки, затемнив группы
+function highlightSingletons() {
+  const visited = Array.from({ length: rows }, () => Array(cols).fill(false));
+  const directions = [[0,1],[1,0],[0,-1],[-1,0]];
+
+  function dfs(y, x, colorIndex, group) {
+    visited[y][x] = true;
+    group.push([y, x]);
+
+    for (const [dy, dx] of directions) {
+      const ny = y + dy;
+      const nx = x + dx;
+      if (
+        ny >= 0 && ny < rows &&
+        nx >= 0 && nx < cols &&
+        !visited[ny][nx] &&
+        board[ny][nx] &&
+        board[ny][nx].colorIndex === colorIndex
+      ) {
+        dfs(ny, nx, colorIndex, group);
+      }
+    }
+  }
+
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      if (board[y][x] && !visited[y][x]) {
+        const group = [];
+        dfs(y, x, board[y][x].colorIndex, group);
+        if (group.length > 1) {
+          for (const [gy, gx] of group) {
+            board[gy][gx].div.classList.add("dimmed");
+          }
+        }
+      }
+    }
+  }
+}
+
+// Очистить затемнение
+function clearHighlighting() {
+  document.querySelectorAll(".dimmed").forEach(el => el.classList.remove("dimmed"));
+}
+
+boardEl.addEventListener("click", (e) => {
+  if (!repaintSelected) return;
+  const target = e.target;
+  if (!target.classList.contains("cell")) return;
+
+  const x = +target.dataset.x;
+  const y = +target.dataset.y;
+
+  if (!board[y][x]) return;
+
+  // Выбрать новый цвет из 4 случайных разных от текущего
+  const currentColorIndex = board[y][x].colorIndex;
+  const possibleColors = [];
+
+  for (let i = 0; i < colors.length; i++) {
+    if (i !== currentColorIndex) possibleColors.push(i);
+  }
+
+  const newColorIndex = possibleColors[Math.floor(Math.random() * possibleColors.length)];
+  board[y][x].colorIndex = newColorIndex;
+  board[y][x].div.style.backgroundColor = colors[newColorIndex];
+
+  repaintSelected = null;
+  repaintBtn.classList.remove("active");
+  dropBtn.disabled = dropUses <= 0;
+
+  repaintUses--;
+  updateRepaintButtonState();
+
+  clearHighlighting();
+
+  // Скрыть крестик отмены
+  document.getElementById("cancelRepaint").style.display = "none";
+});
+
+
+// Утилита тасования
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+function showGameOver(score) {
+  alert("Игра окончена! Ваш счёт: " + score);
+}
+</script>
+
+<script>
+function closeHelp() {
+  document.getElementById("help-popup").style.display = "none";
+}
+</script>
+<!-- Help Popup -->
+<div id="help-popup">
+<div class="help-content">
+<h2 data-i18n="title">Как играть</h2>
+<p data-i18n="line1">Нажмите на группу кубиков одного цвета, чтобы удалить их с поля.</p>
+<p data-i18n="line2">Чем больше группа, тем больше очков:</p>
+<ul data-i18n="points">
+<li>2 кубика — 2 очка</li>
+<li>3 — 6 очков</li>
+<li>4 — 12 очков</li>
+<li>5 — 20 очков</li>
+<li>6+ — по формуле: N × (N - 1)</li>
+</ul>
+<div class="feature-row">
+      <img src="icons/add.svg" alt="Коллапс" class="feature-icon">
+      <span data-i18n="feature1">сбросить вниз семь случайных кубиков</span>
+    </div>
+    
+    <div class="feature-row">
+      <img src="icons/paint.svg" alt="Краска" class="feature-icon">
+      <span data-i18n="feature2">Перекрасить одиночный кубик в случайный цвет</span>
+    </div>
+<button data-i18n="button" onclick="closeHelp()">Понятно</button>
+</div>
+</div>
+    
+<div id="gameover-popup">
+  <div class="gameover-content">
+    <img src="img/gameover_3.svg" alt="Game Over" style="width: 150px; display: block; margin: 0 auto 20px;">
+    <h2 id="gameOverTitle" data-i18n="gameOverTitle">Конец игры</h2>
+    <div id="gameOverScoreWrapper">
+    <div id="final-score-label" data-i18n="scoreLabel" style="text-align: center; font-family: Nunito; font-size: 16px; padding-top: 10px;">Счёт</div>
+    <div id="final-score" style="text-align: center; font-family: Days One; font-size: 28px; font-weight: 400; padding-bottom: 10px;">0</div>
+    </div>
+    <div class="gameover-buttons">
+    <button onclick="restartGame()" data-i18n="playAgainButton">Новая игра</button>
+    </div>
+  </div>
+</div>
+    
+<script>
+document.getElementById("help-button").onclick = function () {
+  document.getElementById("help-popup").style.display = "block";
+};
+function closeHelp() {
+  document.getElementById("help-popup").style.display = "none";
+}
+</script>
+<script src="script.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log('Service Worker registered', reg))
+        .catch(err => console.error('Service Worker registration failed:', err));
+    });
+  }
+</script>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      return false;
+    });
+  });
+</script>
+<!--
+<script>
+const translations = {
+  ru: {
+    title: "Как играть",
+    line1: "Нажмите на группу кубиков одного цвета, чтобы удалить их с поля.",
+    line2: "Чем больше группа, тем больше очков:",
+    points: [
+      "2 кубика — 2 очка",
+      "3 — 6 очков",
+      "4 — 12 очков",
+      "5 — 20 очков",
+      "6+ — по формуле: N × (N - 1)"
+    ],
+    button: "Понятно",
+    pageTitle: "Коллапс",
+    newGameTitle: "Новая игра",
+    helpButtonTitle: "Справка",
+    scoreLabel: "Счёт",
+    gameOverTitle: "Конец игры",
+    playAgainButton: "Новая игра",
+  },
+  en: {
+    title: "How to Play",
+    line1: "Click on a group of bricks of the same color to remove them from the board.",
+    line2: "The larger the group, the more points you earn:",
+    points: [
+      "2 bricks — 2 points",
+      "3 — 6 points",
+      "4 — 12 points",
+      "5 — 20 points",
+      "6+ — by the formula: N × (N - 1)"
+    ],
+    button: "Got it",
+    pageTitle: "Collapse",
+    newGameTitle: "New game",
+    helpButtonTitle: "Help",
+    scoreLabel: "Score",
+    gameOverTitle: "Game over",
+    playAgainButton: "New game",
+  }
+};
+
+function updateHelpText(lang) {
+  const t = translations[lang];
+  document.querySelector('#help-popup h2').textContent = t.title;
+  const paragraphs = document.querySelectorAll('#help-popup p');
+  paragraphs[0].textContent = t.line1;
+  paragraphs[1].textContent = t.line2;
+
+  const ul = document.querySelector('#help-popup ul');
+  ul.innerHTML = '';
+  t.points.forEach(item => {
+    const li = document.createElement('li');
+    li.textContent = item;
+    ul.appendChild(li);
+  });
+
+  document.querySelector('#help-popup button').textContent = t.button;
+
+  document.title = t.pageTitle || t.title;
+
+  const newGameBtn = document.getElementById('newGame');
+  if (newGameBtn) {
+    newGameBtn.title = t.newGameTitle || "";
+  }
+
+  const helpBtn = document.getElementById('help-button');
+  if (helpBtn) {
+    helpBtn.title = t.helpButtonTitle || "";
+  }
+
+  const scoreLabel = document.getElementById('score-label');
+  if(scoreLabel) scoreLabel.textContent = t.scoreLabel || "";
+}
+
+// Модальное окно, переводчик
+function applyTranslations(lang) {
+  const t = translations[lang];
+  if (!t) return;
+
+  const gameOverTitle = document.getElementById('gameOverTitle');
+  if (gameOverTitle) gameOverTitle.textContent = t.gameOverTitle;
+
+  const finalScoreLabel = document.getElementById('final-score-label');
+  if (finalScoreLabel) finalScoreLabel.textContent = t.scoreLabel;
+
+  const gameOverButton = document.querySelector('#gameover-popup button');
+  if (gameOverButton) gameOverButton.textContent = t.newGameTitle;
+}
+
+// Обработчик смены языка
+document.getElementById('lang-selector').addEventListener('change', function() {
+  const lang = this.value;
+  updateHelpText(lang);
+  applyTranslations(lang);
+});
+
+// При загрузке страницы сразу применяем выбранный язык ко всем текстам
+const initialLang = document.getElementById('lang-selector').value;
+updateHelpText(initialLang);
+applyTranslations(initialLang);
+</script>
+-->
+<script>
+  async function startNewGame() {
+    console.log('[Game] Запуск новой игры...');
+    // Тут запускай свою игру (например, сброс поля, счёт, и т.д.)
+  }
+
+  window.addEventListener('load', async () => {
+    const sdkReady = await YandexSDK.init();
+
+    if (sdkReady) {
+      await YandexSDK.initPlayer();
+      const lang = YandexSDK.getLanguage();
+      console.log('[Game] Язык интерфейса:', lang);
+    }
+
+    // Кнопка "Новая игра"
+    document.getElementById('newGame').addEventListener('click', () => {
+      YandexSDK.showAd();
+    });
+  });
+    
+document.addEventListener("DOMContentLoaded", () => {
+  const splash = document.getElementById("splash-screen");
+  
+  if (splash) {
+    setTimeout(() => {
+      splash.style.opacity = "0"; // плавное исчезновение
+      splash.style.pointerEvents = "none"; // блокируем взаимодействие с экраном
+    }, 3000); // задержка, чтобы увидеть логотип
+
+    // Удаляем сплэш-экран после исчезновения
+    setTimeout(() => {
+      splash.remove();
+    }, 5000); // 5 секунд для завершения анимации
+  }
+});
+
+</script>
+<!--<audio id="break-sound" src="sounds/click1.wav" preload="auto"></audio>-->
+<!-- Снегопад -->
+<canvas id="snowCanvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999;"></canvas>
+
+<!-- <script>
+    // Ждем загрузки DOM
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('snowCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Устанавливаем размер canvas
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+        // Создаем снежинки
+        const snowflakes = [];
+        const snowflakeCount = 150;
+        
+        class Snowflake {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 4 + 1;
+                this.speed = Math.random() * 1 + 0.5;
+                this.wind = Math.random() * 0.5 - 0.25;
+                this.opacity = Math.random() * 0.5 + 0.3;
+            }
+            
+            update() {
+                this.y += this.speed;
+                this.x += this.wind;
+                
+                if (this.y > canvas.height) {
+                    this.y = -10;
+                    this.x = Math.random() * canvas.width;
+                }
+                
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+            }
+            
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.fill();
+            }
+        }
+        
+        // Инициализация снежинок
+        for (let i = 0; i < snowflakeCount; i++) {
+            snowflakes.push(new Snowflake());
+        }
+        
+        // Анимация
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            snowflakes.forEach(snowflake => {
+                snowflake.update();
+                snowflake.draw();
+            });
+            
+            requestAnimationFrame(animate);
+        }
+        
+        animate();
+    });
+</script> -->
 </body>
 </html>
