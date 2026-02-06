@@ -785,6 +785,27 @@ function closeHelp() {
     </div>
     <div class="gameover-buttons">
     <button onclick="restartGame()" data-i18n="playAgainButton">Новая игра</button>
+    <button id="leaderboard-button" 
+        style="filter: box-shadow(4px 4px 10px #1a1a1a); margin-right: 10px;"
+        data-i18n="leaderboardButtonTitle" 
+        data-i18n-attr="title"
+        title="Таблица лидеров">
+    <img src="icons/trophy.svg" alt="🏆" style="width: 30px; height: 30px;">
+    </button>
+    </div>
+  </div>
+</div>
+
+<!-- Таблица лидеров -->
+<div id="leaderboard-popup">
+  <div class="leaderboard-content">
+    <h2 data-i18n="leaderboardTitle">Таблица лидеров</h2>
+    <div id="leaderboard-list">
+      <!-- Список будет заполняться JavaScript -->
+    </div>
+    <div class="leaderboard-buttons">
+      <button onclick="hideLeaderboard()" data-i18n="closeButton">Закрыть</button>
+      <button onclick="shareScore()" data-i18n="shareButton">Поделиться</button>
     </div>
   </div>
 </div>
