@@ -585,33 +585,258 @@ updateDropButtonState();
 updateRepaintButtonState();
 
 // Добавить 7 случайных блоков
+// Заменяем текущую функцию dropBtn.addEventListener('click', ...)
 dropBtn.addEventListener("click", () => {
-  if (dropUses <= 0) return;
-
-  const emptyCells = [];
-  for (let y = 0; y < rows; y++) {
-    for (let x = 0; x < cols; x++) {
-      if (!board[y][x]) emptyCells.push({ x, y });
+    if (gameStats.dropUses <= 0) return;
+    
+    // Считаем, сколько блоков нужно добавить в каждый столбец
+    const columnsToFill = calculateEmptySpaces();
+    
+    if (columnsToFill.total === 0) {
+        showNotification("Поле уже заполнено!", "info");
+        return;
     }
-  }
+    
+    // Добавляем блоки в каждый столбец до полного заполнения
+    fillAllColumns(columnsToFill);
+    
+    // Анимируем заполнение
+    animateFill(columnsToFill, () => {
+        // После анимации проверяем автоматические удаления
+        setTimeout(() => {
+            checkAutoMatches();
+        }, 300);
+    });
+    
+    // Используем одно умение
+    gameStats.dropUses--;
+    updateDropButtonState();
+    
+    console.log(`Добавлено ${columnsToFill.total} блоков, заполнено ${columnsToFill.columns.length} столбцов`);
+});
 
-  if (emptyCells.length === 0) return;
+// Рассчитываем пустые места в каждом столбце
+function calculateEmptySpaces() {
+    const columns = [];
+    let totalEmpty = 0;
+    
+    for (let x = 0; x < cols; x++) {
+        // Считаем пустые ячейки сверху вниз
+        let emptyCount = 0;
+        for (let y = 0; y < rows; y++) {
+            if (!board[y][x]) {
+                emptyCount++;
+            }
+        }
+        
+        if (emptyCount > 0) {
+            columns.push({ x, count: emptyCount });
+            totalEmpty += emptyCount;
+        }
+    }
+    
+    return { columns, total: totalEmpty };
+}
 
-  shuffleArray(emptyCells);
-  const toAdd = Math.min(7, emptyCells.length);
-  for (let i = 0; i < toAdd; i++) {
-    const { x, y } = emptyCells[i];
+// Заполняем все столбцы до верха
+function fillAllColumns(columnsData) {
+    const { columns } = columnsData;
+    
+    columns.forEach(colData => {
+        const { x, count } = colData;
+        
+        // Находим верхние пустые позиции в столбце
+        let positions = [];
+        for (let y = 0; y < rows; y++) {
+            if (!board[y][x]) {
+                positions.push(y);
+            }
+        }
+        
+        // Заполняем сверху вниз
+        positions.forEach(y => {
+            createCellAt(x, y);
+        });
+    });
+}
+
+// Создаем ячейку на определенной позиции
+function createCellAt(x, y) {
     const colorIndex = Math.floor(Math.random() * colors.length);
     const div = document.createElement("div");
-    div.className = "cell";
+    div.className = "cell new-drop"; // Добавляем класс для анимации
     div.style.backgroundColor = colors[colorIndex];
     div.dataset.x = x;
     div.dataset.y = y;
+    
+    // Начальная позиция (выше экрана)
+    div.style.position = "absolute";
+    div.style.left = `${x * cellSize}px`;
+    div.style.top = `-${(y + 1) * cellSize}px`; // Начинаем сверху за пределами поля
+    div.style.opacity = "0";
+    div.style.transform = "scale(0.5)";
+    
     board[y][x] = { colorIndex, div };
     boardEl.appendChild(div);
+    
+    // Добавляем обработчики событий
     div.addEventListener("mouseenter", handleHover);
     div.addEventListener("click", handleClick);
-  }
+    
+    return div;
+}
+
+// Анимируем заполнение
+function animateFill(columnsData, callback) {
+    const newCells = document.querySelectorAll(".cell.new-drop");
+    let completed = 0;
+    
+    newCells.forEach((cell, index) => {
+        const x = +cell.dataset.x;
+        const y = +cell.dataset.y;
+        
+        // Задержка для эффекта каскада
+        setTimeout(() => {
+            // Анимация падения
+            cell.style.transition = "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)";
+            cell.style.top = `${y * cellSize}px`;
+            cell.style.opacity = "1";
+            cell.style.transform = "scale(1)";
+            
+            // Добавляем эффект "пружинки" в конце
+            setTimeout(() => {
+                cell.style.transition = "transform 0.1s";
+                cell.style.transform = "scale(1.1)";
+                setTimeout(() => {
+                    cell.style.transform = "scale(1)";
+                    cell.classList.remove("new-drop");
+                }, 100);
+            }, 300);
+            
+            // Звуковой эффект (если есть)
+            playDropSound(index * 50); // Задержка между звуками
+            
+            completed++;
+            if (completed === newCells.length && callback) {
+                setTimeout(callback, 200);
+            }
+        }, index * 50); // Задержка между блоками для эффекта каскада
+    });
+    
+    // Если нет новых клеток, сразу вызываем callback
+    if (newCells.length === 0 && callback) {
+        callback();
+    }
+}
+
+// Проверяем автоматические совпадения после заполнения
+function checkAutoMatches() {
+    let totalMatches = 0;
+    let matchesFound = false;
+    
+    do {
+        matchesFound = false;
+        
+        for (let y = 0; y < rows; y++) {
+            for (let x = 0; x < cols; x++) {
+                const cell = board[y][x];
+                if (cell) {
+                    const group = getGroup(x, y);
+                    if (group.length >= 2) {
+                        // Удаляем группу
+                        removeGroup(group);
+                        totalMatches += group.length;
+                        matchesFound = true;
+                        
+                        // Небольшая пауза между удалениями для эффекта цепной реакции
+                        break;
+                    }
+                }
+            }
+            if (matchesFound) break;
+        }
+        
+        if (matchesFound) {
+            // Сразу схлопываем поле
+            collapse(() => {
+                // Продолжаем проверку после схлопывания
+            });
+        }
+    } while (matchesFound);
+    
+    if (totalMatches > 0) {
+        showNotification(`Автоудаление: ${totalMatches} блоков!`, "success");
+    }
+}
+
+// Удаляем группу блоков (отдельная функция для автоудаления)
+function removeGroup(group) {
+    group.forEach(p => {
+        if (board[p.y][p.x] && board[p.y][p.x].div) {
+            // Анимация удаления
+            const div = board[p.y][p.x].div;
+            div.style.transition = "all 0.2s";
+            div.style.opacity = "0";
+            div.style.transform = "scale(0)";
+            
+            setTimeout(() => {
+                if (div.parentNode) {
+                    boardEl.removeChild(div);
+                }
+            }, 200);
+            
+            board[p.y][p.x] = null;
+        }
+    });
+    
+    score += group.length * (group.length - 1);
+    scoreEl.textContent = score;
+}
+
+// Функция для звуковых эффектов (опционально)
+function playDropSound(delay = 0) {
+    setTimeout(() => {
+        try {
+            const sound = document.getElementById("drop-sound");
+            if (sound) {
+                sound.currentTime = 0;
+                sound.play().catch(e => console.log("Звук не воспроизведен:", e));
+            }
+        } catch (e) {
+            // Игнорируем ошибки звука
+        }
+    }, delay);
+}
+
+// Уведомления
+function showNotification(message, type = "info") {
+    const notification = document.createElement('div');
+    notification.className = `fill-notification ${type}`;
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: ${type === 'success' ? '#4CAF50' : '#2196F3'};
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-family: 'Nunito', sans-serif;
+        font-weight: bold;
+        font-size: 16px;
+        z-index: 3000;
+        animation: fillNotify 1.5s ease-out;
+        pointer-events: none;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 1500);
+}
 
   positionAll();
   collapse();
