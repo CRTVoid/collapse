@@ -598,7 +598,7 @@ dropBtn.addEventListener("click", () => {
   if (emptyCells.length === 0) return;
 
   shuffleArray(emptyCells);
-  const toAdd = Math.min(27, emptyCells.length);
+  const toAdd = Math.min(200, emptyCells.length);
   for (let i = 0; i < toAdd; i++) {
     const { x, y } = emptyCells[i];
     const colorIndex = Math.floor(Math.random() * colors.length);
