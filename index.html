@@ -317,14 +317,14 @@ window.addEventListener('load', checkOrientation);
 
 <script>
 const colorSchemes = [
-  ["#F45D01", "#97CC04", "#2D7DD2", "#EEB902", "#68B0AB"],  // Классическая цветная
-  ["#565554", "#2E86AB", "#F6F5AE", "#F5F749", "#F24236"],  // Трансформер
-  ["#EE6352", "#08B2E3", "#EFE9F4", "#57A773", "#484D6D"],  // Пластилин
-  ["#006E90", "#F18F01", "#ADCAD6", "#99C24D", "#41BBD9"],  // Спорткар
-  ["#E6C229", "#F17105", "#D11149", "#6610F2", "#1A8FE3"],  // Мемфис
-  ["#FF595E", "#FFCA3A", "#8AC926", "#1982C4", "#6A4C93"],  // Цветные мелки
-  ["#272727", "#FED766", "#009FB7", "#696773", "#EFF1F3"],  // Осенний вечер
-  ["#403F4C", "#E84855", "#F9DC5C", "#3185FC", "#EFBCD5"]   // Пастель
+  ["#F45D01", "#97CC04", "#2D7DD2", "#EEB902", "#68B0AB"],
+  ["#565554", "#2E86AB", "#F6F5AE", "#F5F749", "#F24236"],
+  ["#EE6352", "#08B2E3", "#EFE9F4", "#57A773", "#484D6D"],
+  ["#006E90", "#F18F01", "#ADCAD6", "#99C24D", "#41BBD9"],
+  ["#E6C229", "#F17105", "#D11149", "#6610F2", "#1A8FE3"],
+  ["#FF595E", "#FFCA3A", "#8AC926", "#1982C4", "#6A4C93"],
+  ["#272727", "#FED766", "#009FB7", "#696773", "#EFF1F3"],
+  ["#403F4C", "#E84855", "#F9DC5C", "#3185FC", "#EFBCD5"]
 ];
 
 window.colors = colorSchemes[0];
@@ -337,9 +337,8 @@ const boardEl = document.getElementById('board');
 const scoreEl = document.getElementById('score');
 document.getElementById("newGame").onclick = () => init();
 
-// Настройки ограничений
-const maxDropUses = 7;
-const maxRepaintUses = 5;
+const maxDropUses = 18;
+const maxRepaintUses = 10;
 let dropUses = maxDropUses;
 let repaintUses = maxRepaintUses;
 
@@ -355,7 +354,6 @@ function init() {
   boardEl.style.width = `${cols * cellSize}px`;
   boardEl.style.height = `${rows * cellSize}px`;
 
-  // Сброс счётчиков кнопок
   dropUses = maxDropUses;
   repaintUses = maxRepaintUses;
   
@@ -364,7 +362,91 @@ function init() {
   updateDropButtonState();
   updateRepaintButtonState();
   
-  console.log("Игра полностью инициализирована");
+  // ВЕШАЕМ ОБРАБОТЧИКИ НА boardEl ДЛЯ ДЕЛЕГИРОВАНИЯ
+  setupEventDelegation();
+  
+  console.log("Игра инициализирована");
+}
+
+// Настройка делегирования событий
+function setupEventDelegation() {
+  // Убираем старые обработчики
+  boardEl.removeEventListener("mouseover", handleMouseOver);
+  boardEl.removeEventListener("click", handleCellClick);
+  boardEl.removeEventListener("mouseleave", clearHighlights);
+  
+  // Вешаем новые
+  boardEl.addEventListener("mouseover", handleMouseOver);
+  boardEl.addEventListener("click", handleCellClick);
+  boardEl.addEventListener("mouseleave", clearHighlights);
+}
+
+// Делегированный обработчик mouseover (работает ВМЕСТО mouseenter)
+function handleMouseOver(e) {
+  const cell = e.target;
+  if (!cell.classList.contains("cell")) {
+    clearHighlights();
+    return;
+  }
+  
+  const x = +cell.dataset.x;
+  const y = +cell.dataset.y;
+  
+  // Проверяем, что ячейка существует в массиве
+  if (!board[y] || !board[y][x]) return;
+  
+  const group = getGroup(x, y);
+  clearHighlights();
+  
+  if (group.length >= 2) {
+    group.forEach(p => {
+      if (board[p.y] && board[p.y][p.x] && board[p.y][p.x].div) {
+        board[p.y][p.x].div.classList.add("highlight");
+      }
+    });
+  }
+}
+
+// Делегированный обработчик клика
+function handleCellClick(e) {
+  const cell = e.target;
+  if (!cell.classList.contains("cell")) return;
+  
+  const x = +cell.dataset.x;
+  const y = +cell.dataset.y;
+  
+  if (!board[y] || !board[y][x]) return;
+  
+  const group = getGroup(x, y);
+  if (group.length < 2) return;
+
+  // Удаляем группу
+  group.forEach(p => {
+    if (board[p.y] && board[p.y][p.x] && board[p.y][p.x].div) {
+      // Анимация удаления
+      const div = board[p.y][p.x].div;
+      div.style.transition = "all 0.2s";
+      div.style.opacity = "0";
+      div.style.transform = "scale(0)";
+      
+      setTimeout(() => {
+        if (div.parentNode) {
+          boardEl.removeChild(div);
+        }
+      }, 200);
+      
+      board[p.y][p.x] = null;
+    }
+  });
+
+  score += group.length * (group.length - 1);
+  scoreEl.textContent = score;
+
+  collapse(() => {
+    if (!hasMoves()) {
+      setTimeout(() => showGameOver(score), 200);
+    }
+  });
 }
 
 // 🟩 Создание доски
@@ -378,11 +460,11 @@ function createBoard() {
       div.style.backgroundColor = colors[colorIndex];
       div.dataset.x = x;
       div.dataset.y = y;
+      div.style.left = `${x * cellSize}px`;
+      div.style.top = `${y * cellSize}px`;
       board[y][x] = { colorIndex, div };
       boardEl.appendChild(div);
-      // Добавляем обработчики
-      div.addEventListener("mouseenter", handleHover);
-      div.addEventListener("click", handleClick);
+      // НЕ добавляем обработчики здесь - они уже на boardEl
     }
   }
 }
@@ -426,42 +508,9 @@ function positionAll() {
   }
 }
 
-// ✨ Подсветка при наведении
-function handleHover(e) {
-  const x = +e.target.dataset.x;
-  const y = +e.target.dataset.y;
-  const group = getGroup(x, y);
-  clearHighlights();
-  if (group.length >= 2) {
-    group.forEach(p => board[p.y][p.x].div.classList.add("highlight"));
-  }
-}
-
 // ❌ Очистка подсветки
 function clearHighlights() {
   document.querySelectorAll(".highlight").forEach(d => d.classList.remove("highlight"));
-}
-
-// 👆 Обработка клика
-function handleClick(e) {
-  const x = +e.target.dataset.x;
-  const y = +e.target.dataset.y;
-  const group = getGroup(x, y);
-  if (group.length < 2) return;
-
-  group.forEach(p => {
-    boardEl.removeChild(board[p.y][p.x].div);
-    board[p.y][p.x] = null;
-  });
-
-  score += group.length * (group.length - 1);
-  scoreEl.textContent = score;
-
-  collapse(() => {
-    if (!hasMoves()) {
-      setTimeout(() => showGameOver(score), 200);
-    }
-  });
 }
 
 // 🔍 Поиск группы одного цвета
@@ -575,22 +624,8 @@ function updateRepaintButtonState() {
   counter.style.background = repaintUses <= 0 ? "#F24236" : "";
 }
 
-// Сразу обновляем кнопки при загрузке
 updateDropButtonState();
 updateRepaintButtonState();
-
-// 🔧 ФУНКЦИЯ ДЛЯ ДОБАВЛЕНИЯ ОБРАБОТЧИКОВ КО ВСЕМ БЛОКАМ
-function addEventListenersToAllCells() {
-  document.querySelectorAll('.cell').forEach(cell => {
-    // Удаляем старые обработчики
-    cell.removeEventListener("mouseenter", handleHover);
-    cell.removeEventListener("click", handleClick);
-    
-    // Добавляем новые
-    cell.addEventListener("mouseenter", handleHover);
-    cell.addEventListener("click", handleClick);
-  });
-}
 
 // Добавить блоки (обвал)
 dropBtn.addEventListener("click", () => {
@@ -611,30 +646,34 @@ dropBtn.addEventListener("click", () => {
   shuffleArray(emptyCells);
   const toAdd = Math.min(200, emptyCells.length);
   
-  // Показываем уведомление
   showNotification(`Добавлено ${toAdd} блоков!`, "success");
   
   for (let i = 0; i < toAdd; i++) {
     const { x, y } = emptyCells[i];
     const colorIndex = Math.floor(Math.random() * colors.length);
     const div = document.createElement("div");
-    div.className = "cell new-block";
+    div.className = "cell";
     div.style.backgroundColor = colors[colorIndex];
     div.dataset.x = x;
     div.dataset.y = y;
+    div.style.left = `${x * cellSize}px`;
+    div.style.top = `${y * cellSize}px`;
+    div.style.opacity = "0";
+    div.style.transform = "scale(0.5)";
+    
     board[y][x] = { colorIndex, div };
     boardEl.appendChild(div);
     
-    // ВАЖНО: Добавляем обработчики к КАЖДОМУ новому блоку
-    div.addEventListener("mouseenter", handleHover);
-    div.addEventListener("click", handleClick);
+    // Анимация появления
+    setTimeout(() => {
+      div.style.transition = "all 0.3s ease";
+      div.style.opacity = "1";
+      div.style.transform = "scale(1)";
+    }, i * 10);
   }
 
   positionAll();
-  collapse(() => {
-    // После обвала перепривязываем ВСЕ обработчики
-    addEventListenersToAllCells();
-  });
+  collapse();
 
   dropUses--;
   updateDropButtonState();
@@ -668,7 +707,7 @@ repaintBtn.addEventListener("click", () => {
   highlightSingletons();
 });
 
-// Выделить одиночные блоки, затемнив группы
+// Выделить одиночные блоки
 function highlightSingletons() {
   const visited = Array.from({ length: rows }, () => Array(cols).fill(false));
   const directions = [[0,1],[1,0],[0,-1],[-1,0]];
@@ -722,7 +761,6 @@ function shuffleArray(array) {
 
 // Функция уведомлений
 function showNotification(message, type = "info") {
-  // Создаем или находим контейнер для уведомлений
   let container = document.getElementById('notifications');
   if (!container) {
     container = document.createElement('div');
@@ -773,25 +811,7 @@ function showGameOver(score) {
   alert("Игра окончена! Ваш счёт: " + score);
 }
 
-// ❗ Обработка движения вне ячеек
-boardEl.addEventListener("mouseleave", clearHighlights);
-
-boardEl.addEventListener("mousemove", (e) => {
-  const target = e.target;
-  if (!target.classList.contains("cell")) {
-    clearHighlights();
-  }
-});
-
-boardEl.addEventListener("touchmove", (e) => {
-  const touch = e.touches[0];
-  const target = document.elementFromPoint(touch.clientX, touch.clientY);
-  if (!target || !target.classList.contains("cell")) {
-    clearHighlights();
-  }
-});
-
-// Запуск игры после полной загрузки страницы
+// Запуск игры
 if (document.readyState === "complete") {
   init();
 } else {
