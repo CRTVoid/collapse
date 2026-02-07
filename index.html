@@ -180,6 +180,24 @@
   border: none;
 }
 </style>
+<style>
+    /* Стили для уведомлений и анимаций */
+    @keyframes fadeInOut {
+        0% { opacity: 0; transform: translateY(-20px); }
+        20% { opacity: 1; transform: translateY(0); }
+        80% { opacity: 1; transform: translateY(0); }
+        100% { opacity: 0; transform: translateY(-20px); }
+    }
+    
+    @keyframes popIn {
+        0% { transform: scale(0.5); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    
+    .new-block {
+        animation: popIn 0.3s ease-out;
+    }
+</style>
 <link href="style.css" rel="stylesheet"/>
 </head>
 <body>
@@ -299,7 +317,6 @@ window.addEventListener('load', checkOrientation);
 
 <script>
 const colorSchemes = [
-  // ["#F3F4F6", "#8E0413", "#CB0B0A", "#568D66", "#004733"],  // Рождество
   ["#F45D01", "#97CC04", "#2D7DD2", "#EEB902", "#68B0AB"],  // Классическая цветная
   ["#565554", "#2E86AB", "#F6F5AE", "#F5F749", "#F24236"],  // Трансформер
   ["#EE6352", "#08B2E3", "#EFE9F4", "#57A773", "#484D6D"],  // Пластилин
@@ -317,10 +334,19 @@ const board = [];
 let score = 0;
 
 const boardEl = document.getElementById('board');
-boardEl.addEventListener("mouseleave", clearHighlights);
 const scoreEl = document.getElementById('score');
 document.getElementById("newGame").onclick = () => init();
 
+// Настройки ограничений
+const maxDropUses = 18;
+const maxRepaintUses = 10;
+let dropUses = maxDropUses;
+let repaintUses = maxRepaintUses;
+
+const dropBtn = document.getElementById("dropBlocksBtn");
+const repaintBtn = document.getElementById("repaintBtn");
+
+// Инициализация игры
 function init() {
   boardEl.innerHTML = "";
   board.length = 0;
@@ -329,12 +355,12 @@ function init() {
   boardEl.style.width = `${cols * cellSize}px`;
   boardEl.style.height = `${rows * cellSize}px`;
 
-  createBoard();
-  positionAll();
-
   // Сброс счётчиков кнопок
   dropUses = maxDropUses;
   repaintUses = maxRepaintUses;
+  
+  createBoard();
+  positionAll();
   updateDropButtonState();
   updateRepaintButtonState();
   
@@ -354,10 +380,12 @@ function createBoard() {
       div.dataset.y = y;
       board[y][x] = { colorIndex, div };
       boardEl.appendChild(div);
-      div.addEventListener("mouseenter", handleHover);
-      div.addEventListener("click", handleClick);
+      // Обработчики НЕ добавляем здесь - они будут через делегирование
     }
   }
+  
+  // Настраиваем делегирование событий
+  setupEventDelegation();
 }
 
 // 🎨 Смена палитры
@@ -399,32 +427,61 @@ function positionAll() {
   }
 }
 
-// ✨ Подсветка при наведении
-function handleHover(e) {
-  const x = +e.target.dataset.x;
-  const y = +e.target.dataset.y;
+// ✨ Делегирование событий
+function setupEventDelegation() {
+  // Очищаем старые обработчики
+  boardEl.removeEventListener("mouseover", handleHoverDelegated);
+  boardEl.removeEventListener("click", handleClickDelegated);
+  boardEl.removeEventListener("mouseleave", clearHighlights);
+  boardEl.removeEventListener("touchmove", handleTouchMoveDelegated);
+  
+  // Добавляем новые обработчики через делегирование
+  boardEl.addEventListener("mouseover", handleHoverDelegated);
+  boardEl.addEventListener("click", handleClickDelegated);
+  boardEl.addEventListener("mouseleave", clearHighlights);
+  boardEl.addEventListener("touchmove", handleTouchMoveDelegated);
+}
+
+// Делегированный обработчик наведения
+function handleHoverDelegated(e) {
+  const cell = e.target;
+  if (!cell.classList.contains("cell")) return;
+  
+  const x = +cell.dataset.x;
+  const y = +cell.dataset.y;
+  
+  if (!board[y] || !board[y][x]) return;
+  
   const group = getGroup(x, y);
   clearHighlights();
+  
   if (group.length >= 2) {
-    group.forEach(p => board[p.y][p.x].div.classList.add("highlight"));
+    group.forEach(p => {
+      if (board[p.y] && board[p.y][p.x] && board[p.y][p.x].div) {
+        board[p.y][p.x].div.classList.add("highlight");
+      }
+    });
   }
 }
 
-// ❌ Очистка подсветки
-function clearHighlights() {
-  document.querySelectorAll(".highlight").forEach(d => d.classList.remove("highlight"));
-}
-
-// 👆 Обработка клика
-function handleClick(e) {
-  const x = +e.target.dataset.x;
-  const y = +e.target.dataset.y;
+// Делегированный обработчик клика
+function handleClickDelegated(e) {
+  const cell = e.target;
+  if (!cell.classList.contains("cell")) return;
+  
+  const x = +cell.dataset.x;
+  const y = +cell.dataset.y;
+  
+  if (!board[y] || !board[y][x]) return;
+  
   const group = getGroup(x, y);
   if (group.length < 2) return;
 
   group.forEach(p => {
-    boardEl.removeChild(board[p.y][p.x].div);
-    board[p.y][p.x] = null;
+    if (board[p.y] && board[p.y][p.x] && board[p.y][p.x].div) {
+      boardEl.removeChild(board[p.y][p.x].div);
+      board[p.y][p.x] = null;
+    }
   });
 
   score += group.length * (group.length - 1);
@@ -435,6 +492,38 @@ function handleClick(e) {
       setTimeout(() => showGameOver(score), 200);
     }
   });
+}
+
+// Делегированный обработчик для touch-устройств
+function handleTouchMoveDelegated(e) {
+  const touch = e.touches[0];
+  const element = document.elementFromPoint(touch.clientX, touch.clientY);
+  
+  if (!element || !element.classList.contains("cell")) {
+    clearHighlights();
+    return;
+  }
+  
+  const x = +element.dataset.x;
+  const y = +element.dataset.y;
+  
+  if (!board[y] || !board[y][x]) return;
+  
+  const group = getGroup(x, y);
+  clearHighlights();
+  
+  if (group.length >= 2) {
+    group.forEach(p => {
+      if (board[p.y] && board[p.y][p.x] && board[p.y][p.x].div) {
+        board[p.y][p.x].div.classList.add("highlight");
+      }
+    });
+  }
+}
+
+// ❌ Очистка подсветки
+function clearHighlights() {
+  document.querySelectorAll(".highlight").forEach(d => d.classList.remove("highlight"));
 }
 
 // 🔍 Поиск группы одного цвета
@@ -531,39 +620,7 @@ function hasMoves() {
   return false;
 }
 
-// ❗ Обработка движения вне ячеек
-boardEl.addEventListener("mousemove", (e) => {
-  const target = e.target;
-  if (!target.classList.contains("cell")) {
-    clearHighlights();
-  }
-});
-boardEl.addEventListener("touchmove", (e) => {
-  const touch = e.touches[0];
-  const target = document.elementFromPoint(touch.clientX, touch.clientY);
-  if (!target || !target.classList.contains("cell")) {
-    clearHighlights();
-  }
-});
-
-// Запуск игры после полной загрузки страницы
-if (document.readyState === "complete") {
-  init();
-} else {
-  window.addEventListener("load", init);
-}
-</script>
-
-<script>
-// Настройки ограничений
-const maxDropUses = 7;
-const maxRepaintUses = 5;
-let dropUses = maxDropUses;
-let repaintUses = maxRepaintUses;
-
-const dropBtn = document.getElementById("dropBlocksBtn");
-const repaintBtn = document.getElementById("repaintBtn");
-
+// 🔄 Обновление состояния кнопок
 function updateDropButtonState() {
   const counter = document.getElementById("dropCounter");
   dropBtn.disabled = dropUses <= 0;
@@ -584,171 +641,50 @@ function updateRepaintButtonState() {
 updateDropButtonState();
 updateRepaintButtonState();
 
-// Улучшенная версия с визуальными эффектами
+// Добавить блоки (обвал)
 dropBtn.addEventListener("click", () => {
-    if (dropUses <= 0) return;
+  if (dropUses <= 0) return;
 
-    const emptyCells = [];
-    for (let y = 0; y < rows; y++) {
-        for (let x = 0; x < cols; x++) {
-            if (!board[y][x]) emptyCells.push({ x, y });
-        }
+  const emptyCells = [];
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      if (!board[y][x]) emptyCells.push({ x, y });
     }
+  }
 
-    if (emptyCells.length === 0) {
-        showNotification("Поле уже заполнено!", "info");
-        return;
-    }
+  if (emptyCells.length === 0) {
+    showNotification("Поле уже заполнено!", "info");
+    return;
+  }
 
-    // Показываем, сколько будет добавлено
-    const toAdd = Math.min(200, emptyCells.length);
-    showNotification(`Добавлено ${toAdd} блоков!`, "success");
+  shuffleArray(emptyCells);
+  const toAdd = Math.min(200, emptyCells.length);
+  
+  // Показываем уведомление
+  showNotification(`Добавлено ${toAdd} блоков!`, "success");
+  
+  for (let i = 0; i < toAdd; i++) {
+    const { x, y } = emptyCells[i];
+    const colorIndex = Math.floor(Math.random() * colors.length);
+    const div = document.createElement("div");
+    div.className = "cell new-block";
+    div.style.backgroundColor = colors[colorIndex];
+    div.dataset.x = x;
+    div.dataset.y = y;
+    board[y][x] = { colorIndex, div };
+    boardEl.appendChild(div);
+    // Обработчики НЕ добавляем - они работают через делегирование
+  }
 
-    // Добавляем с небольшой анимацией
-    shuffleArray(emptyCells);
-    
-    for (let i = 0; i < toAdd; i++) {
-        const { x, y } = emptyCells[i];
-        const colorIndex = Math.floor(Math.random() * colors.length);
-        const div = document.createElement("div");
-        div.className = "cell new-block";
-        div.style.backgroundColor = colors[colorIndex];
-        div.dataset.x = x;
-        div.dataset.y = y;
-        
-        // Начальная анимация (по желанию)
-        div.style.opacity = "0";
-        div.style.transform = "scale(0.5)";
-        
-        board[y][x] = { colorIndex, div };
-        boardEl.appendChild(div);
-        
-        // Анимация появления
-        setTimeout(() => {
-            div.style.transition = "all 0.2s ease";
-            div.style.opacity = "1";
-            div.style.transform = "scale(1)";
-            setTimeout(() => div.classList.remove("new-block"), 200);
-        }, i * 10); // Небольшая задержка для каскадного эффекта
-        
-        div.addEventListener("mouseenter", handleHover);
-        div.addEventListener("click", handleClick);
-    }
+  positionAll();
+  collapse();
 
-    positionAll();
-    collapse(() => {
-        // Проверяем автоматические совпадения после заполнения
-        checkAutoMatches();
-    });
-
-    dropUses--;
-    updateDropButtonState();
+  dropUses--;
+  updateDropButtonState();
 });
-
-// Функция проверки автоматических совпадений
-function checkAutoMatches() {
-    let foundAny = false;
-    
-    for (let y = 0; y < rows; y++) {
-        for (let x = 0; x < cols; x++) {
-            const cell = board[y][x];
-            if (cell) {
-                const group = getGroup(x, y);
-                if (group.length >= 2) {
-                    // Удаляем найденную группу
-                    removeGroup(group);
-                    foundAny = true;
-                    break;
-                }
-            }
-        }
-        if (foundAny) break;
-    }
-    
-    if (foundAny) {
-        // После удаления схлопываем и проверяем снова
-        collapse(() => {
-            setTimeout(checkAutoMatches, 100);
-        });
-    }
-}
-
-// Простая функция уведомлений
-function showNotification(message, type = "info") {
-    // Создаем или находим контейнер для уведомлений
-    let container = document.getElementById('notifications');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'notifications';
-        container.style.cssText = `
-            position: fixed;
-            top: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10000;
-            pointer-events: none;
-        `;
-        document.body.appendChild(container);
-    }
-    
-    const notification = document.createElement('div');
-    notification.textContent = message;
-    notification.style.cssText = `
-        background: ${type === 'success' ? '#4CAF50' : '#2196F3'};
-        color: white;
-        padding: 10px 20px;
-        margin: 5px;
-        border-radius: 5px;
-        font-family: 'Nunito', sans-serif;
-        font-weight: bold;
-        animation: fadeInOut 2s ease;
-        opacity: 0;
-    `;
-    
-    container.appendChild(notification);
-    
-    setTimeout(() => {
-        notification.style.transition = 'opacity 0.5s';
-        notification.style.opacity = '1';
-    }, 10);
-    
-    setTimeout(() => {
-        notification.style.opacity = '0';
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
-            }
-        }, 500);
-    }, 1500);
-}
-
-// Добавляем CSS для анимации
-if (!document.querySelector('#notification-styles')) {
-    const style = document.createElement('style');
-    style.id = 'notification-styles';
-    style.textContent = `
-        @keyframes fadeInOut {
-            0% { opacity: 0; transform: translateY(-20px); }
-            20% { opacity: 1; transform: translateY(0); }
-            80% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-20px); }
-        }
-        
-        .new-block {
-            animation: popIn 0.3s ease-out;
-        }
-        
-        @keyframes popIn {
-            0% { transform: scale(0.5); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-    `;
-    document.head.appendChild(style);
-}
 
 // Перекрасить выбранный блок
 let repaintSelected = null;
-
 const cancelRepaintIcon = document.getElementById("cancelRepaint");
 
 function cancelRepaint() {
@@ -762,13 +698,11 @@ function cancelRepaint() {
 repaintBtn.addEventListener("click", () => {
   if (repaintUses <= 0) return;
 
-  // Если уже активен — отключаем
   if (repaintSelected) {
     cancelRepaint();
     return;
   }
 
-  // Иначе — активируем
   repaintSelected = true;
   repaintBtn.classList.add("active");
   dropBtn.disabled = true;
@@ -856,7 +790,6 @@ boardEl.addEventListener("click", (e) => {
   document.getElementById("cancelRepaint").style.display = "none";
 });
 
-
 // Утилита тасования
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -865,8 +798,64 @@ function shuffleArray(array) {
   }
 }
 
+// Функция уведомлений
+function showNotification(message, type = "info") {
+  // Создаем или находим контейнер для уведомлений
+  let container = document.getElementById('notifications');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'notifications';
+    container.style.cssText = `
+      position: fixed;
+      top: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10000;
+      pointer-events: none;
+    `;
+    document.body.appendChild(container);
+  }
+  
+  const notification = document.createElement('div');
+  notification.textContent = message;
+  notification.style.cssText = `
+    background: ${type === 'success' ? '#4CAF50' : '#2196F3'};
+    color: white;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: bold;
+    animation: fadeInOut 2s ease;
+    opacity: 0;
+  `;
+  
+  container.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.style.transition = 'opacity 0.5s';
+    notification.style.opacity = '1';
+  }, 10);
+  
+  setTimeout(() => {
+    notification.style.opacity = '0';
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.parentNode.removeChild(notification);
+      }
+    }, 500);
+  }, 1500);
+}
+
 function showGameOver(score) {
   alert("Игра окончена! Ваш счёт: " + score);
+}
+
+// Запуск игры после полной загрузки страницы
+if (document.readyState === "complete") {
+  init();
+} else {
+  window.addEventListener("load", init);
 }
 </script>
 
