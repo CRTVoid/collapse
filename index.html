@@ -584,7 +584,7 @@ function updateRepaintButtonState() {
 updateDropButtonState();
 updateRepaintButtonState();
 
-// Добавить 7 случайных блоков
+// Заполнить поле кубами
 dropBtn.addEventListener("click", () => {
   if (dropUses <= 0) return;
 
@@ -599,6 +599,27 @@ dropBtn.addEventListener("click", () => {
 
   shuffleArray(emptyCells);
   const toAdd = Math.min(200, emptyCells.length);
+  
+  // Добавляем CSS для анимации если ещё не добавлен
+  if (!document.querySelector('#cubeAnimationStyle')) {
+    const style = document.createElement('style');
+    style.id = 'cubeAnimationStyle';
+    style.textContent = `
+      .cell {
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        opacity: 0;
+        transform: scale(0) rotate(-180deg);
+        pointer-events: none;
+      }
+      .cell.visible {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+        pointer-events: all;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
   for (let i = 0; i < toAdd; i++) {
     const { x, y } = emptyCells[i];
     const colorIndex = Math.floor(Math.random() * colors.length);
@@ -609,11 +630,26 @@ dropBtn.addEventListener("click", () => {
     div.dataset.y = y;
     board[y][x] = { colorIndex, div };
     boardEl.appendChild(div);
-    div.addEventListener("mouseenter", handleHover);
-    div.addEventListener("click", handleClick);
+    
+    // Добавляем обработчики после анимации
+    div.addEventListener("mouseenter", () => {
+      if (div.classList.contains('visible')) handleHover();
+    });
+    div.addEventListener("click", () => {
+      if (div.classList.contains('visible')) handleClick();
+    });
   }
 
   positionAll();
+  
+  // Запускаем анимацию с задержкой для каждого куба
+  const cubes = document.querySelectorAll('.cell:not(.visible)');
+  cubes.forEach((cube, index) => {
+    setTimeout(() => {
+      cube.classList.add('visible');
+    }, index * 30); // Задержка 30ms между кубами для каскадного эффекта
+  });
+  
   collapse();
 
   dropUses--;
