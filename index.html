@@ -529,7 +529,7 @@ function collapse(callback) {
   // Если нет анимаций, просто обновляем позиции
   if (animations.length === 0) {
     positionAll();
-    if (callback) setTimeout(callback, 300);
+    if (callback) setTimeout(callback, 500);
     return;
   }
 
@@ -576,7 +576,7 @@ function collapse(callback) {
   requestAnimationFrame(() => {
     elementAnimations.forEach(anim => {
       const div = anim.element.div;
-      div.style.transition = 'left 0.3s ease-in-out, top 0.3s ease-in-out';
+      div.style.transition = 'left 0.5s ease-in-out, top 0.5s ease-in-out';
       div.style.left = `${anim.toX * cellSize}px`;
       div.style.top = `${anim.toY * cellSize}px`;
     });
@@ -593,7 +593,7 @@ function collapse(callback) {
       positionAll();
       
       if (callback) callback();
-    }, 300);
+    }, 500);
   });
 }
 
