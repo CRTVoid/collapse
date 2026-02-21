@@ -15,13 +15,13 @@ const translations = {
     newGameTitle: "Новая игра",
     helpButtonTitle: "Справка",
     changeColorButtonTitle: "Сменить оформление",
-    dropBlockBtnTitle: "Сбросить 7 случайных кубиков",
+    dropBlockBtnTitle: "Заполнить поле кубиками",
     repaintBtnTitle: "Перекрасить одиночный кубик в случайный цвет",
     scoreLabel: "Счёт",
     gameOverTitle: "Конец игры",
     playAgainButton: "Новая игра",
     splashLogoTitle: "КОЛЛАПС",
-    feature1: "Сбрасывает вниз семь случайных кубиков",
+    feature1: "Заполнить поле кубиками",
     feature2: "Перекрашивает одиночный кубик в случайный цвет"
   },
   en: {
@@ -40,13 +40,13 @@ const translations = {
     newGameTitle: "New game",
     helpButtonTitle: "Help",
     changeColorButtonTitle: "Change color theme",
-    dropBlockBtnTitle: "Drop 7 random blocks",
+    dropBlockBtnTitle: "Fill field with cubes",
     repaintBtnTitle: "Recolor a single block to a random color",
     scoreLabel: "Score",
     gameOverTitle: "Game over",
     playAgainButton: "New game",
     splashLogoTitle: "COLLAPSE",
-    feature1: "Drops seven random cubes down",
+    feature1: "Fill field with cubes",
     feature2: "Repaints a single cube to a random color"
   }
 };
@@ -83,3 +83,4 @@ YaGames.init().then(ysdk => {
   currentLang = translations[sdkLang] ? sdkLang : 'en';
   applyTranslations();
 });
+
