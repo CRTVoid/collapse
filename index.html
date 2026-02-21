@@ -608,7 +608,7 @@ dropBtn.addEventListener("click", () => {
       .cell {
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         opacity: 0;
-        transform: scale(0) rotate(-180deg);
+        transform: scale(0) rotate(0deg);
         pointer-events: none;
       }
       .cell.visible {
@@ -647,7 +647,7 @@ dropBtn.addEventListener("click", () => {
   cubes.forEach((cube, index) => {
     setTimeout(() => {
       cube.classList.add('visible');
-    }, index * 30); // Задержка 30ms между кубами для каскадного эффекта
+    }, index * 20); // Задержка 20ms между кубами для каскадного эффекта
   });
   
   collapse();
