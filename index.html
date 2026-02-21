@@ -464,50 +464,125 @@ function getGroup(x, y) {
   return group;
 }
 
-// 🧹 Обрушение и сдвиг
+// 🧹 Обрушение и сдвиг с анимацией
 function collapse(callback) {
+  // Сохраняем текущие позиции для анимации
+  const movingElements = [];
+  
+  // Вертикальное обрушение
   for (let x = 0; x < cols; x++) {
     let pointer = rows - 1;
     for (let y = rows - 1; y >= 0; y--) {
       if (board[y][x]) {
         if (y !== pointer) {
-          board[pointer][x] = board[y][x];
-          board[pointer][x].div.dataset.y = pointer;
+          // Сохраняем элемент для анимации
+          const element = board[y][x];
+          movingElements.push({
+            element: element,
+            startY: y,
+            endY: pointer,
+            startX: x,
+            endX: x
+          });
+          
+          board[pointer][x] = element;
+          pointer--;
           board[y][x] = null;
+        } else {
+          pointer--;
         }
-        pointer--;
       }
     }
   }
 
+  // Горизонтальный сдвиг
   let writeCol = 0;
   for (let readCol = 0; readCol < cols; readCol++) {
     if (board.some(row => row[readCol])) {
       if (writeCol !== readCol) {
         for (let y = 0; y < rows; y++) {
-          board[y][writeCol] = board[y][readCol];
-          if (board[y][writeCol]) {
-            board[y][writeCol].div.dataset.x = writeCol;
+          if (board[y][readCol]) {
+            // Сохраняем элемент для анимации
+            const element = board[y][readCol];
+            movingElements.push({
+              element: element,
+              startX: readCol,
+              endX: writeCol,
+              startY: y,
+              endY: y
+            });
+            
+            board[y][writeCol] = element;
+            board[y][readCol] = null;
           }
-          board[y][readCol] = null;
         }
       }
       writeCol++;
     }
   }
 
+  // Очищаем оставшиеся колонки
   for (let x = writeCol; x < cols; x++) {
     for (let y = 0; y < rows; y++) {
       board[y][x] = null;
     }
   }
 
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      positionAll();
-      if (callback) setTimeout(callback, 300);
-    });
+  // Анимируем перемещение элементов
+  animateElements(movingElements, callback);
+}
+
+// Функция анимации элементов
+function animateElements(elements, callback) {
+  if (elements.length === 0) {
+    positionAll();
+    if (callback) setTimeout(callback, 300);
+    return;
+  }
+
+  // Применяем CSS transition к перемещаемым элементам
+  elements.forEach(item => {
+    const div = item.element.div;
+    div.style.transition = 'transform 0.3s ease-in-out';
+    div.style.zIndex = '10';
   });
+
+  // Позиционируем элементы в начальных позициях
+  positionAll();
+
+  // Запускаем анимацию в следующем кадре
+  requestAnimationFrame(() => {
+    elements.forEach(item => {
+      const div = item.element.div;
+      const startRect = getElementRect(item.startX, item.startY);
+      const endRect = getElementRect(item.endX, item.endY);
+      
+      // Устанавливаем transform для плавного перемещения
+      div.style.transform = `translate(${endRect.left - startRect.left}px, ${endRect.bottom - startRect.bottom}px)`;
+    });
+
+    // Обновляем dataset после анимации
+    setTimeout(() => {
+      elements.forEach(item => {
+        const div = item.element.div;
+        div.dataset.x = item.endX;
+        div.dataset.y = item.endY;
+        div.style.transition = '';
+        div.style.transform = '';
+        div.style.zIndex = '';
+      });
+      
+      // Финальное позиционирование
+      positionAll();
+      if (callback) callback();
+    }, 300);
+  });
+}
+
+// Вспомогательная функция для получения координат элемента
+function getElementRect(x, y) {
+  const cell = document.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+  return cell ? cell.getBoundingClientRect() : { left: 0, bottom: 0 };
 }
 
 // ❓ Есть ли ещё ходы?
