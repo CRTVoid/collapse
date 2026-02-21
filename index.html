@@ -556,8 +556,8 @@ if (document.readyState === "complete") {
 
 <script>
 // Настройки ограничений
-const maxDropUses = 18;
-const maxRepaintUses = 10;
+const maxDropUses = 7;
+const maxRepaintUses = 5;
 let dropUses = maxDropUses;
 let repaintUses = maxRepaintUses;
 
@@ -598,7 +598,7 @@ dropBtn.addEventListener("click", () => {
   if (emptyCells.length === 0) return;
 
   shuffleArray(emptyCells);
-  const toAdd = Math.min(7, emptyCells.length);
+  const toAdd = Math.min(200, emptyCells.length);
   for (let i = 0; i < toAdd; i++) {
     const { x, y } = emptyCells[i];
     const colorIndex = Math.floor(Math.random() * colors.length);
