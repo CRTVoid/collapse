@@ -584,7 +584,7 @@ function updateRepaintButtonState() {
 updateDropButtonState();
 updateRepaintButtonState();
 
-// Заполнить поле кубами
+// Добавить 7 случайных блоков
 dropBtn.addEventListener("click", () => {
   if (dropUses <= 0) return;
 
@@ -599,104 +599,27 @@ dropBtn.addEventListener("click", () => {
 
   shuffleArray(emptyCells);
   const toAdd = Math.min(200, emptyCells.length);
-  
-  // Добавляем CSS для анимации если ещё не добавлен
-  if (!document.querySelector('#cubeAnimationStyle')) {
-    const style = document.createElement('style');
-    style.id = 'cubeAnimationStyle';
-    style.textContent = `
-      @keyframes popIn {
-        0% {
-          opacity: 0;
-          transform: scale(0) rotate(0deg);
-        }
-        70% {
-          transform: scale(0.4) rotate(0deg);
-        }
-        100% {
-          opacity: 1;
-          transform: scale(1) rotate(0deg);
-        }
-      }
-      
-      .cell.new-cube {
-        animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        opacity: 0; /* Начинаем с прозрачности */
-        pointer-events: none; /* Блокируем клики во время анимации */
-      }
-      
-      .cell.new-cube.animation-complete {
-        opacity: 1;
-        pointer-events: all;
-        animation: none; /* Убираем анимацию после завершения */
-      }
-      
-      /* Старые кубы без анимации */
-      .cell:not(.new-cube) {
-        opacity: 1;
-        pointer-events: all;
-      }
-    `;
-    document.head.appendChild(style);
-  }
-
-  // Сохраняем текущие кубы, чтобы не анимировать их повторно
-  const existingCubes = new Set();
-  document.querySelectorAll('.cell').forEach(cube => {
-    existingCubes.add(cube);
-  });
-
-  // Создаем новые кубы
   for (let i = 0; i < toAdd; i++) {
     const { x, y } = emptyCells[i];
     const colorIndex = Math.floor(Math.random() * colors.length);
     const div = document.createElement("div");
-    
-    // Добавляем класс new-cube только для новых кубов
-    div.className = "cell new-cube";
+    div.className = "cell";
     div.style.backgroundColor = colors[colorIndex];
     div.dataset.x = x;
     div.dataset.y = y;
     board[y][x] = { colorIndex, div };
     boardEl.appendChild(div);
-    
-    // Сохраняем оригинальные обработчики
-    const originalHover = handleHover;
-    const originalClick = handleClick;
-    
-    // Добавляем обработчики, которые сработают только после анимации
-    div.addEventListener("mouseenter", () => {
-      if (!div.classList.contains('new-cube') || div.classList.contains('animation-complete')) {
-        originalHover();
-      }
-    });
-    
-    div.addEventListener("click", () => {
-      if (!div.classList.contains('new-cube') || div.classList.contains('animation-complete')) {
-        originalClick();
-      }
-    });
+    div.addEventListener("mouseenter", handleHover);
+    div.addEventListener("click", handleClick);
   }
 
   positionAll();
-  
-  // Запускаем анимацию только для новых кубов
-  const newCubes = document.querySelectorAll('.cell.new-cube');
-  newCubes.forEach((cube, index) => {
-    setTimeout(() => {
-      // Анимация уже запущена через CSS, просто отмечаем её завершение
-      setTimeout(() => {
-        cube.classList.add('animation-complete');
-        cube.classList.remove('new-cube'); // Опционально: удаляем класс new-cube
-      }, 400); // Время равно длительности анимации
-    }, index * 20); // Каскадный эффект
-  });
-  
   collapse();
 
   dropUses--;
   updateDropButtonState();
 });
+
 // Перекрасить выбранный блок
 let repaintSelected = null;
 
